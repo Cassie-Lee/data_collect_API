@@ -159,20 +159,102 @@ db是要使用的数据库名，没有默认值
 commit() 提交
 rollback() 回滚
 
+cursor=db.cursor() 使用方法cursor（）获取操作游标
+cursor.execute("SELECT VERSION()") 使用execute()方法执行SQL语句
+data=cursor.fetchone()
+print "Database version:%s" % data 使用fetchone()方法获取一条数据库
+db.close() 关闭数据库连接
+cursor.fetchall() 获取所有记录列表
 
+数据库查询操作
+# 打开数据库连接
+db = MySQLdb.connect("localhost","root","361way","test" )
+# 使用cursor()方法获取操作游标
+cursor = db.cursor()
+# SQL 查询语句
+sql = "SELECT * FROM EMPLOYEE \
+       WHERE INCOME > '%d'" % (1000)
+try:
+   # 执行SQL语句
+   cursor.execute(sql)
+   # 获取所有记录列表
+   results = cursor.fetchall()
+   for row in results:
+      fname = row[0]
+      lname = row[1]
+      age = row[2]
+      sex = row[3]
+      income = row[4]
+      # 打印结果
+      print "fname=%s,lname=%s,age=%d,sex=%s,income=%d" % \
+             (fname, lname, age, sex, income )
+except:
+   print "Error: unable to fecth data"
+# 关闭数据库连接
+db.close()
+脚本执行结果：fname=Mac, lname=Mohan, age=20, sex=M, income=2000
 
+数据库更新操作
+# 打开数据库连接
+db = MySQLdb.connect("localhost","root","361way","test" )
+# 使用cursor()方法获取操作游标
+cursor = db.cursor()
+# SQL 更新语句
+sql = "UPDATE EMPLOYEE SET AGE = AGE + 1
+                          WHERE SEX = '%c'" % ('M')
+try:
+   # 执行SQL语句
+   cursor.execute(sql)
+   # 提交到数据库执行
+   db.commit()
+except:
+   # 发生错误时回滚
+   db.rollback()
+# 关闭数据库连接
+db.close()
+更新操作用于更新数据表的数据，以上实例将test表中的SEX字段全部修改为‘M’,AGE字段递增1。
 
+global 声明全局变量
+global x，y
 
+socket.setdefaulttimeout(30)  设置全局超时
+设置HTTP或socket访问超时，是为了防止爬虫抓取某个页面时间太长
 
+python模块之hashlib：md5和sha算法
+hashlib是个专门提供hash算法的库，现在里面包括md5、sha1,、sha224、sha256、sha384、sha512
+md5经常用来做用户密码的存储，而sha1则经常用来作数字签名
+import hashlib
+a="a test string"
+print hashlib.sha256(a).hexdigest()
+print hashlib.md5(a).hexdigest()
+print hashlib.sha224(a).hexdigest()
+print hashlib.sha384(a).hexdigest()
+print hashlib.sha512(a).hexdigest()
 
+rollback和commit的用法
+rollback和commit都是用在执行DML语句之后。
+所谓DML语句就是INSERT/DELETE/UPDATE/SELECT，而CREATE TABLE/VIEW之类的语句，是DDL
+DML语句执行完之后，处理的数据，都会放在回滚段中（除了SELECT语句），等待用户进行提交（commit）或者回滚（rollback），
+当用户执行提交或者回滚后，放在回滚段中的数据就会被删除。
+所有DML语句都是要显示提交了，所谓显示提交，就是要执行提交或者回滚，而其他诸如DDL语句的，都是隐式提交，就是说不用执行提交或者回滚。
+DML语句后，ORACLE已经进行了隐式提交，例如CREATE TABLE，在运行脚本后，表已经建好了，并不需要要你再进行显式提交。
+可以形象地理解成：
+commit就是讲数据库中的数据提交到回滚段中，会覆盖原先数据
+rollback就是将回滚段中的数据回滚到数据库中，不会覆盖数据，不管之前有没有设置回滚点，rollback回滚的数据都不会变，除非commit覆盖了原先的数据。
 
+python连接字符串的5中方法
+加号 'a'+'b' 输出结果：ab
+逗号 'a','b' 输出结果：a b
+直接连接 'a''b' 输出结果：ab   
+直接连接是python独有的，只要把两个字符串放在一起，中间有空白或者没有空白，两个字符串自动连接为一个字符串
+格式化 '%s %s'%('a','b') 输出结果：a b
+格式化功能比较强大，借鉴了C语言中的printf函数的功能。这种方式用符号‘%’连接一个字符串和一组变量，字符串中的特殊标记会被自动用右边变量组中的变量替换。
+list=['a','b']
+c=''
+c.join(list)
+输出结果：ab
+利用字符串函数join，这个函数接收一个列表，然后用字符串依次连接列表中的每一个元素。
 
-
-
-
-
-
-
-
-
-
+python SMTP发送邮件
+SMTP(simple mail transfer protocol)即简单邮件传输协议，它是一组用于由源地址到目的地址传送邮件的规则，由它来控制信件的中转方式。
+python的smtplib提供了一种很方便的途径发送电子邮件，它对smtp协议进行了简单的封装
