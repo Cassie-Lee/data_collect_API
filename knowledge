@@ -1,0 +1,178 @@
+from multiprocessing.dummy import Pool as ThreadPool
+multiprocessing.dummy Pool 多线程、进程任务队列使用
+一般有from multiprocessing.dummy import Pool as ThreadPool：多线程
+from multiprocessing import Pool as ProcessPool：多进程
+一般CPU密集型的选择用多进程，IO密集型的选择多线程。多进程和多线程的区别是：前者开销大，后者开销较小。前者相当于拷贝，后者相当于分流。
+
+Pool类中的方法：
+map() 与内置的map函数用法行为基本一致，它会使进程阻塞直到返回结果
+close() 关闭进程池（pool），使其不在接受新的任务
+terminate() 结束工作进程，不再处理未处理的任务
+join() 主进程阻塞等待子进程的退出，join方法必须在close或terminate之后使用
+
+logging模块使用
+logging.debug（‘debug message’）
+logging.info（‘info message’）
+logging.warn（‘warn message’）
+logging.error（‘error message’）
+logging.critical（‘critical message’）
+输出结果：
+WARNING:root:warn message
+ERROR:root:error message
+CRITICAL:root:error message
+默认情况下，logging模块将日志打印在屏幕上，日志级别为WARNING（即只有日志级别高于WARNING的日志信息才会输出）。日志格式：
+日志级别：logger实例名称：日志消息内容
+
+"日志级别等级及设置是怎样的？怎样设置日志的输出方式？比如输出到日志文件中？"
+
+日志级别：
+DEBUG:详细信息，典型地调试问题时会感兴趣
+INFO：证明事情按预期工作
+WARNING：表明发生了一些意外，或者不久的将来会发生问题（如磁盘满了）。软件还是正常工作
+ERROR：由于更严重的问题，软件已经不能执行一些功能了
+CRITICAL：严重错误，表明软件已不能继续运行了
+
+def initLog():
+    logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                    filename='../log/CloudSite.log',
+                    filemode='w')
+                    
+通过level设置日志级别，高于（等于）这个级别的日志信息才能输出出来
+
+几个重要概念：
+Logger 记录器，暴露了应用程序代码能直接使用的接口，
+创建方法：logger=logging.getLogger(logger_name)
+Handler 处理器，将（记录器产生的）日志记录发送至合适的目的地,
+创建方法：sh=logging.StreanHandler(stream=None)或者fh=logging.FileHandler(filename,mode='a',encoding=None,delay=False)
+Filter 过滤器，提供了更好的粒度控制，它可以决定输出哪些日志记录,创建方法：filter=logging.Filter(name='')
+Formatter 格式化器，指明了最终输出中日志记录的布局,创建方法：formatter=logging.Formatter(fmt=None,datefmt=None)，其中，fmt是消息的格式化字符串，
+datefmt是日期字符串。如果不指明fmt，将使用‘&(message)s’。如果不指明datefmt，将使用ISO8601日期格式。
+
+日志配置方式：
+通过简单方式进行配置，使用basicConfig()函数直接进行配置
+通过配置文件进行配置，使用fileConfig()函数读取配置文件
+通过配置字典进行配置，使用dictConfig()函数读取配置信息
+通过网络进行配置，使用listen()函数进行网络配置
+
+basicConfig关键字参数
+filename 创建一个FileHandler，使用指定的文件名，而不是使用StreamHandler
+filemode 如果指定了文件名，指明打开文件的模式（如果没有指明，默认为‘a’）
+format handler使用指明的格式化字符串
+datefmt 使用指明的日期时间格式
+level 指明根logger的级别
+stream 使用指明的流来初始化StreanHandler，该参数与‘filename’不兼容，如果两个都有，stream被忽略
+
+有用的format格式
+%(levelno)s 打印日志级别的数值
+%(levelname)s 打印日志级别名称
+%(pathname)s 打印当前执行程序的路径
+%(filename)s 打印当前执行程序名称
+%(funcName)s 打印日志的当前函数
+%(lineno)s 打印日志的当前行号
+%(asctime)s 打印日志的时间
+%(threadName)s 打印线程名称
+%(process)d 打印进程ID
+%(thread)d 打印线程ID
+%(message)s 打印日志信息
+
+使用ConfigParser模块读写ini文件
+
+ConfigParser模块文件中定义了3个类对ini文件进行操作，分别是RawConfigParser、ConfigParser、SafeConfigParser。模块所解析的ini配置文件是由多个
+section构成，每个section名用中括号[]包含，每个section下可有多个配置项类似于key-value形成，如：
+[database]
+ip=cloudu-3306-mydb-ser.service.consul
+user=appadmin_cloudu
+password=xfowaih982!#@ty43
+base_name=productionbase
+[xxx]
+...
+
+ConfigParser初始化
+使用ConfigParser首先需要初始化实例，并读取配置文件：
+cf=ConfigParser.ConfigParser()
+cf.read('配置文件名')
+
+基本的读取配置文件
+read(filename) 直接读取ini文件内容
+sections() 得到所有的section，并以列表的形式返回
+options(section) 得到该section的所有option
+items(section) 得到该section的所有键-值对
+get(section,option) 得到section中的option的值，返回为string类型
+getint(section,option) 得到section中option的值，返回为int类型，还有相应的getboolean()和getfloat()函数
+
+基本的写入配置文件
+add_section(section) 添加一个新的section
+set(section,option,value) 对section中的option进行设置，需要调用write将内容写入配置文件
+write(strout) 将对configparser类的修改写入
+
+
+httplib模块使用
+httplib是一个相对底层的http请求模块，其上有专门的包装模块，如urllib内建模块、goto等第三方模块，但是封装得越高就越不灵活，比如urllib模块里
+请求错误时就不会返回结果页的内容，只有头信息，对于某些需要检测错误请求返回值的场景就不适用，所以就得用这个模块了。
+
+httplib.HTTPConnection
+该类用于创建一个http类型的请求链接
+httplib.HTTPConnection(host[,port[,strict[,timeout]]])
+host(ip) 请求的服务器host（ip），不能带http：//开头
+port 服务器web服务端口
+strict 是否严格检查请求的状态行，就是http1.0/1.1协议版本的那一行，即请求的第一行，默认为False，为True时检查错误会跑异常
+timeout 单次请求的超时时间，没有时默认使用httplib模块内的全局的超时时间
+
+HTTPConnection类会实例并返回一个HTTPConnection对象
+
+HTTPConnection对象request方法：发送一个请求
+coon.request(method,url[,body[,headers]]])
+method 请求的方式，如：‘GET’、‘POST’、‘HEAD’、‘PUT’、‘DELETE’等
+url 请求的网页路径，如“/index.html”
+body 请求是否带数据，该参数是一个字典
+headers 请求是否带头信息，该参数是一个字典，不过键的名字是指定的http头关键字
+coon.request('GET','/','',{'user-agent':'test'})
+无返回，其实就是相当于向服务器发送数据，但是没有最后回车
+
+HTTPConnection对象getresponse方法：获取一个http响应对象，相当于执行最后的2个回车
+res=conn.getresponse()
+
+HTTPConnection对象close()方法:关闭指定的httpconnect链接
+conn.close()
+
+HTTPConnection对象read()方法：获得http响应中的内容部分，即网页源码
+body=res.read()
+括号内默认为空，即读取所有内容
+
+HTTPConnection对象的其它方法：
+getheaders() 获取所有的响应头内容，是一个元组列表[(name,vaue),(name1,value1)]
+getheader() 获得指定的头内容
+
+HTTPConnection对象的属性
+msg 所有的头信息，和getheaders方法一样，只不过这个是原始未处理的字符串
+status 当次请求的状态
+version 当次请求的http协议版本，10是http/1.0,11是http/1.1
+reason 当次请求的结果的表述内容，200是ok，404是not found
+
+MySQLdb模块用法实例
+在python中连接MySQLdb可以实现数据的各种操作
+数据库连接：MySQLdb提供了connect方法用来和数据库建立连接，接收数个参数，返回连接对象：
+conn=MySQLdb.connect(host="localhost",user="root",passwd="jb51",db="test",charset="utf8")
+db是要使用的数据库名，没有默认值
+然后这个连接对象也提供了对事务操作的支持，标准的方法：
+commit() 提交
+rollback() 回滚
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
