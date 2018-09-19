@@ -1,0 +1,79 @@
+linux命令行，如何批量执行python脚本：
+定位到当前包含所有脚本的文件夹，执行：for i in `ls *.py`;do python $i;done
+
+python里的“%s”和“%d”是什么意思？
+%s  表示格式化一个对象为字符串
+%d  表示格式化一个对象为整数
+"Hello, %s"%"zhang3" => "Hello, zhang3"
+"%d"%33 => "33"
+"%s:%d"%("ab",3) => "ab:3"
+
+python的xlrd模块
+python操作excel主要用到xlrd和xlwt两个库，xlrd是读excel，xlwt是写excel
+在cmd窗口安装：pip install xlrd
+data=xlrd.open_workbook(filename)   打开excel文件读取数据，filename是文件名及路径，如果路径或者文件名中有中文，给前面加一个r表示原生字符
+常用的函数：
+excel中最重要的方法是book和sheet操作
+获取book中的一个工作表：
+table=data.sheets()[0]  通过索引顺序获取
+table=data.sheet_by_index(sheet_index)   通过索引顺序获取
+table=data.sheet_by_name(sheet_name)      通过名称获取
+以上三个函数都会返回一个xlrd.sheet.sheet()对象
+names = data.sheet_names()    #返回book中所有工作表的名字
+data.sheet_loaded(sheet_name or indx)   # 检查某个sheet是否导入完毕
+行的操作：
+nrows = table.nrows  #获取该sheet中的有效行数
+table.row(rowx)  #返回由该行中所有的单元格对象组成的列表
+table.row_slice(rowx)  #返回由该列中所有的单元格对象组成的列表
+table.row_types(rowx, start_colx=0, end_colx=None)    #返回由该行中所有单元格的数据类型组成的列表
+table.row_values(rowx, start_colx=0, end_colx=None)   #返回由该行中所有单元格的数据组成的列表
+table.row_len(rowx) #返回该列的有效单元格长度
+列的操作：
+ncols = table.ncols   #获取列表的有效列数
+table.col(colx, start_rowx=0, end_rowx=None)  #返回由该列中所有的单元格对象组成的列表
+table.col_slice(colx, start_rowx=0, end_rowx=None)  #返回由该列中所有的单元格对象组成的列表
+table.col_types(colx, start_rowx=0, end_rowx=None)    #返回由该列中所有单元格的数据类型组成的列表
+table.col_values(colx, start_rowx=0, end_rowx=None)   #返回由该列中所有单元格的数据组成的列表
+单元格的操作：
+table.cell(rowx,colx)   #返回单元格对象
+table.cell_type(rowx,colx)    #返回单元格中的数据类型
+table.cell_value(rowx,colx)   #返回单元格中的数据
+table.cell_xf_index(rowx, colx)   # 暂时还没有搞懂
+
+python long（）函数
+long（）函数将数字或字符串转换为一个长整型
+class long(x,base=10)                     #x是字符串或数字，base是可选的，进制数，默认十进制，整个函数的返回值是长整型数
+>>>long()
+0L
+>>> long(1)
+1L
+>>> long('123')
+123L
+
+python time strftime()方法
+time strftime()函数接收时间元组，并返回以可读字符串表示的当地时间，格式由参数format决定
+time.strftime(format[, t])       format是格式字符串，t，可选参数，t是一个struct_time对象
+
+python中时间日期格式化符号：
+%y 两位数的年份表示（00-99）
+%Y 四位数的年份表示（000-9999）
+%m 月份（01-12）
+%d 月内中的一天（0-31）
+%H 24小时制小时数（0-23）
+%I 12小时制小时数（01-12）
+%M 分钟数（00=59）
+%S 秒（00-59）
+%a 本地简化星期名称
+%A 本地完整星期名称
+%b 本地简化的月份名称
+%B 本地完整的月份名称
+%c 本地相应的日期表示和时间表示
+%j 年内的一天（001-366）
+%p 本地A.M.或P.M.的等价符
+%U 一年中的星期数（00-53）星期天为星期的开始
+%w 星期（0-6），星期天为星期的开始
+%W 一年中的星期数（00-53）星期一为星期的开始
+%x 本地相应的日期表示
+%X 本地相应的时间表示
+%Z 当前时区的名称
+%% %号本身
