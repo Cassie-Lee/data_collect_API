@@ -85,3 +85,11 @@ linux添加定时任务
 
 如何将数据库从生产库修改为测试库：
 config目录中有个database.cfg文件，base_name=productionbase修改为base_name=cloudbase
+
+linux下批量执行python脚本：
+同一文件夹下，执行多个脚本：for i in `ls *.py`;do python $i;done
+或者可以写一个脚本，用于执行多个脚本，这里有一个相对路径问题，如果写定时任务需要注意：
+如果一个脚本作用是执行同一路径的其他脚本，在写定时任务的时候，先进行打开该文件夹操作，即定位操作，如：
+* * * * *  /usr/bin/python cd /xxxx/ && sciprt.py > dev/null 2>&1
+如果是单脚本文件，提供绝对路径即可：
+* * * * *  /usr/bin/python /xxxx/sciprt.py > dev/null 2>&1
