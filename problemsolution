@@ -1,0 +1,63 @@
+报错：TypeError: not all arguments converted during string formatting
+一般情况下是两边字符串数量不对等
+
+mysql workbench 常用快捷键
+新建tab(new tab) ctrl+t
+执行当前语句(execute current statement)   ctrl+enter 
+执行全部或选中的语句(execute all or selection)   ctrl+shift+enter 
+查看执行计划(explain current statement)  ctrl+alt+x
+注释   - -加空格，如 –    select * from t; 
+
+mysql内联结与外联结
+内联结可使用where语句，也可以使用（inner）jion...on...，语句中表的顺序可以任意，按公共字段，结果集中只产生两张表中共有的部分
+外联结可分为：左外联结，右外联结和全外联结
+外联结可以产生这些信息：在相同列上没有对应值的行也可以包含在结果表中。在表之间找不到对应值时，在该列上的位置上以控制填充。（不会丢失其中一张表的
+信息，比如说左联结和右联结，或两种表的信息都不丢失，比如说全联结）
+外联结可以使用left（outer）jion...on,right (outer) join...on,full(outer) join...on...，语句中表的顺序对结果集有影响。
+左联结保证左边的表中的信息不会丢失，左表中的某个字段值，右表不存在对应的值，则结果集中把这条记录中右表对应的位置null，右联结，全联结与左联结类似。
+
+如何展示文件隐藏拓展名
+控制面板--外观和个性化--文件夹选项--显示隐藏的文件和文件夹--查看--显示隐藏的文件和文件夹（取消勾选隐藏已知文件的扩展名）
+
+Ord函数说明
+Ord 返回字符的ASCII编码值。
+Ord('0')，返回的是字符’0’对应的ASCII编码
+>127：认为是双字节字符
+>=48且<=57：0-9
+>=65且<=90：A-Z
+>=97且<=122：a-z
+
+vue-cli使用vue脚手架快速搭建前台项目：
+
+前提：下载安装node.js（完成后带npm）
+查看版本（是否安装成功）：node -v , npm -v ,vue -V
+
+1.配置npm代理
+在hw内部不能使用外网，但是可以使用华为内部的代理
+打开cmd命令窗口，按顺序执行下列命令，配置npm
+npm config rm proxy
+npm config rm http-proxy
+npm config rm https-proxy
+npm config set no-proxy .huawei.com
+npm config set registry http://w3cloudnkg-sit1.huawei.com/ccloud/nexus/content/groups/npm-all/
+
+2.安装vue
+npm install vue -g
+
+3.安装vue-cli
+npm install  vue-cli -g
+
+4.下载vue模板并进行初始化
+vue init  模板名称  项目名称  for example： vue init webpack-develop  myvue
+模板可以到vue官网下载，到  https://github.com/vuejs-templates（或者：https://github.com/vuejs/vue-cli） 下载对应的模板压缩包，解压
+使用如下命令创建项目并初始化项目模板 ： vue init ./webpack-develop vue
+
+5.然后根据提示，输入对应信息
+项目名称，一路回车，选择项直接全部选择no，最后一项选择yes（should we run 'npm install' for you after the project has been created?）。
+然后继续按回车显示初始化完成。
+
+6.然后按照提示，执行下列命令
+cd myvue     //进入所创建的项目文件夹myvue
+npm run dev   //启动项目
+
+然后在网页中打开  http://localhost:8080  显示vue欢迎界面的即表示运行成功。
