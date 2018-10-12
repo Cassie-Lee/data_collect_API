@@ -61,3 +61,102 @@ cd myvue     //进入所创建的项目文件夹myvue
 npm run dev   //启动项目
 
 然后在网页中打开  http://localhost:8080  显示vue欢迎界面的即表示运行成功。
+
+linux重命名和移动文件和文件夹
+mv A B 将目录A重命名为B
+mv /a /b/c  将/a目录移动到/b下，并重命名为c
+mv abc def  将名为abc的文件重命名为def，（注意，如果当前目录下也有名为def的文件的话，那么这个重命名的文件会将其覆盖）
+
+pycharm连接远程服务器配置
+配置deployment（tools里）
+选择configuration，选择加号，传输类型选择sftp
+填上连接名称（随意）--填上远程linux服务器ip（sftp host）--端口默认22，rootpath填写你在linux里要访问的文件路径，然后填写用户名和密码，
+以上是connect部分，是连接linux服务器填写的部分，如果要从本地上传文件至linux服务器，需要继续配置mappings
+localpath填写你要上传至linux服务器的本地文件的放置路径，打开的pycahrm的时候也是直接在这个路径下打开
+deployment path on server ‘linux...’填写文件部署在linux上的路径，即本地文件会被上传到当前路径
+webpath on server... 可以默认不填
+选择远程python解释器
+file--settings--project xx--project interpreter，选择右方设置按钮，选择deployment configuration，配置deployment configuration，选择create
+，copy of this deployment server。最后的python interpreter path，选择linux上python解释器的绝对路径。
+选中左边的external libraries，即选择远程python解释器。
+
+本地连接远程服务器：打开指定文件夹，选择tools--deployment--browse remote host，即可连接远程服务器，可以双击打开文件，进行修改后直接点击上传
+按钮，即可自动同步到linux服务器上。也可以进行更名操作，实时同步的。
+
+python round()函数
+round（）方法返回浮点数x的四舍五入值
+print "round(80.23456, 2) : ", round(80.23456, 2)
+print "round(100.000056, 3) : ", round(100.000056, 3)
+print "round(-100.000056, 3) : ", round(-100.000056, 3)
+对应结果：
+round(80.23456, 2) :  80.23
+round(100.000056, 3) :  100.0
+round(-100.000056, 3) :  -100.0
+
+python datetime 时间日期处理小结：
+#1、返回昨天日期
+def getYesterday():  
+   today=datetime.date.today()  
+   oneday=datetime.timedelta(days=1)  
+   yesterday=today-oneday   
+   return yesterday  
+#2、返回今天日期   
+def getToday():  
+    return datetime.date.today()     
+#4、将字符串转换成datetime类型  
+def strtodatetime(datestr,format):      
+    return datetime.datetime.strptime(datestr,format)  
+#5、时间转换成字符串,格式为2008-08-02  
+def datetostr(date):    
+    return   str(date)[0:10]   
+#8、获取当前年份 是一个字符串  
+def getYear():  
+    return str(datetime.date.today())[0:4]   
+
+#9、获取当前月份 是一个字符串  
+def getMonth():  
+    return str(datetime.date.today())[5:7]  
+
+#10、获取当前天 是一个字符串  
+def getDay():  
+    return str(datetime.date.today())[8:10]     
+def getNow():  
+    return datetime.datetime.now()  
+    
+#11、将字符串格式化成时间  
+
+    import datetime
+    >>> s="2006-1-2"
+    print datetime.datetime.strptime(s,"%Y-%m-%d")
+    2006-01-02 00:00:00
+    import time
+    >>> s="2006-1-2"
+    >>> time.strptime(s,"%Y-%m-%d")
+    >>> from time import *
+    >>> strftime("%Y-%m-%d %H:%M:%S", localtime())
+    '2011-10-12 03:00:58'
+#12、将格式字符串转换为时间戳
+    >>> a = "Sat Mar 28 22:24:24 2009"
+    >>> b = mktime(strptime(a,"%a %b %d %H:%M:%S %Y"))
+    >>> print b
+    1238250264.0
+    
+python如何读取一个文件的最后一行：
+1，文件比较大时，一行一行循环直到最后一行，读取最后一行；
+targetLine = "";
+lineNo = 0;  
+while 1:
+    mLine = file.readline();
+    if not mLine:
+        break;
+    lineNo += 1;
+    if (linecount == lineNO):
+        targetLine = mLine;
+        
+2, 文件比较小，直接读取全文，取最后一行数据。
+targetLine = "";  
+mLines = file.read();
+targetLine = mLines[-1];
+
+如何快速的注释掉一行：鼠标放在某一行，ctrl+/
+
