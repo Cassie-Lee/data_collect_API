@@ -160,3 +160,51 @@ targetLine = mLines[-1];
 
 如何快速的注释掉一行：鼠标放在某一行，ctrl+/
 
+print语句的python2和python3的区别：
+python2：print “xxx”  ，print bianliang   ;python3: print ("xxx")  , print (bianliang)
+
+linux删除文件夹和文件
+rm 文件名       rm -rf  目录名/文件夹
+
+pycharm只有 pycharm professional版本支持连接远程服务器
+
+pycharm还有一个比较功能，可以比较远程和本地文件：
+选择Tools | Deployment | Browse Remote Host，打开远程文件视图，在右侧窗口就能看到远程主机中的文件
+选择一个你想要对比的文件夹，点击右键->Sync with Local，打开同步对比窗口，使用左右箭头来同步内容。
+上面是服务器与本地对比，那么本地文件通服务器对比，就先在PyCharm里面选择文件或文件夹，然后右键->Deployment->Sync with deployed to即可
+
+配置远程python解释器
+选择File | Settings，选择Project | Project Interpreter，然后在右边，点击那个小齿轮设置；
+然后点击”Add Remote”，填写主机的ssh配置
+如果之前配置过SFTP的话就直接选“Deployment configuration”，然后选择刚刚的模板名称就可以了
+然后设置python interpreter path，设置为linux上python解释器的绝对路径就可以了。
+
+
+windows查看隐藏文件夹和显示拓展名：
+计算机--组织--文件夹与搜素选项--查看--
+
+Mysql workbench 连接数据库：
+Manage connection或者直接选择加号：输入数据库账号密码，端口默认，测试连接成功后，即可连接
+虚拟机内还需要加权限：
+路径：c\windows\system32\drivers\dect
+用记事本打开hosts文件，在最底端加入  ip 域名
+这里连接数据库是填入： 10.1.70.155  cloudu-3306-mydb-ser.service.consul
+
+Python zip() 函数
+zip() 函数用于将可迭代的对象作为参数，将对象中对应的元素打包成一个个元组，然后返回由这些元组组成的列表。
+如果各个迭代器的元素个数不一致，则返回列表长度与最短的对象相同，利用 * 号操作符，可以将元组解压为列表。
+zip 方法在 Python 2 和 Python 3 中的不同：在 Python 3.x 中为了减少内存，zip() 返回的是一个对象。如需展示列表，需手动 list() 转换。
+>>>a = [1,2,3]
+>>> b = [4,5,6]
+>>> c = [4,5,6,7,8]
+>>> zipped = zip(a,b)     # 打包为元组的列表
+[(1, 4), (2, 5), (3, 6)]
+>>> zip(a,c)              # 元素个数与最短的列表一致
+[(1, 4), (2, 5), (3, 6)]
+>>> zip(*zipped)          # 与 zip 相反，*zipped 可理解为解压，返回二维矩阵式
+[(1, 2, 3), (4, 5, 6)]
+
+package.json
+管理所有module的，里面有我们项目里面用到的包，现在这个项目搭起来只是基础的，可能后面我们还需要使用到别的包，就需要将包添加到这个文件里面。
+然后Npm install 重新安装下
+
