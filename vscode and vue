@@ -28,3 +28,61 @@ vue-router 默认 hash 模式 —— 使用 URL 的 hash 来模拟一个完整�
 就会返回 404，这就不好看了。
 所以呢，你要在服务端增加一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，则应该返回同一个 index.html 页面，这个页面就是你 app 依赖的页面。
 建议：后台在没有配置的情况下，不建议开启history 模式，否则项目编译过后的页面打开空白，本地运行正常。
+
+vscode插件离线安装：以Auto Close Tag为例（自动补全标签）（适合没网情况）（有网情况下直接在extension搜索插件安装即可）
+打开vscode插件市场（Extensions for the Visual Studio family of product），输入想要的安装的插件名称。
+点击进入插件主页，点击右侧的 Download Extension 链接，得到下载下来的离线安装包，以 .vsix 为扩展名结尾
+把下载下来的离线安装包拷贝到 VSCode 的安装目录下的 bin 目录下，比如我的 VSCode 安装在 D:\Microsoft VS Code\，因此这里我应该拷贝到 
+D:\Microsoft VS Code\bin 这个目录下 
+在第 3 步的 bin 目录下右键点击 在此处打开命令窗口，输入命令，最后面的参数换成你下载的插件离线安装包的名字即可：
+code --install-extension yzhang.markdown-all-in-one-1.4.0.vsix
+待看到如下提示即意味着安装成功，就可以打开 VSCode 进行查看了
+Extension ‘yzhang.markdown-all-in-one-1.4.0.vsix’ was successfully installed!
+
+pycharm安装：
+官网下载pycharm安装包
+选择windows系统的专业版下载（professional），安装软件，创建桌面快捷方式并关联py文件，选择开始菜单文件夹（默认即可），点击安装。
+安装完后，勾选立即运行pycharm，选择是否导入开发配置文件，我们选择不导入，
+选择输入激活码激活软件，“activation code”
+软件激活方式
+  1、推荐购买正版软件。
+  2、可以选择下载社区版本，免费的。
+  3、专业版本可以选择试用，免费试用30天。
+  4、网上寻找激活码或授权服务器。
+我们使用第4种方法：
+  在IntelliJ IDEA 注册码网站，获取激活码，以前允许自定义用户名，现在已经是No了，只能直接获取激活码。
+点击获取激活码后，文本默认是全选中的，直接右击选择复制即可。
+将激活码粘贴到文本框，点击OK即可。
+
+pycharm常用快捷键：
+1、Ctrl + Enter：在下方新建行但不移动光标；
+2、Shift + Enter：在下方新建行并移到新行行首；
+3、Ctrl + /：注释(取消注释)选择的行；
+4、Ctrl + Alt + L：格式化代码(与QQ锁定热键冲突，关闭QQ的热键)；
+5、Ctrl + Shift + +：展开所有的代码块；
+6、Ctrl + Shift + -：收缩所有的代码块；
+7、Ctrl + Alt + I：自动缩进行；
+8、Alt + Enter：优化代码，添加包；
+9、Ctrl + Shift + F：高级查找；
+10、Alt + Shift + Q：更新代码到远程服务器；
+
+使用pycharm可以直接为远程linux服务器设置权限（替代chmod操作）：
+选中远程linux服务器的文件，右击，选change permissions，然后可以直接勾选权限，x为执行权限
+
+vscode常用快捷键：
+Ctrl +`	切换集成终端	workbench.action.terminal.toggleTerminal
+Ctrl + K Ctrl + C.	添加行注释	editor.action.addCommentLine
+Ctrl + K Ctrl + U.	删除行注释	editor.action.removeCommentLine
+按Ctrl + F	找	actions.find
+按Ctrl + H	更换	editor.action.startFindReplaceAction
+
+
+
+
+
+
+
+
+
+
+
