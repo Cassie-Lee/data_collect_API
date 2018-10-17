@@ -1,0 +1,17 @@
+元素名称1，元素名称2 {
+  样式名1：样式；
+  样式名2：样式；
+  ...
+}
+
+如果放在html等其他文件中，应该用style标签把css包裹起来，html文件是是放在head元素中，vue文件放在最底部，用<style></style>
+
+放在css文件中则不需要加style，其他文件上使用css时只需使用link连接到样式文件即可
+<link type="text/css" rel="stylesheet" href="lounge.css">
+rel属性指定l
+
+backgroud-color:red；   背景色 红色
+border：1px solid gray；   边框  1像素线宽，实线，灰色 
+color:maroon;     字体颜色 茶红色 （非font-color,text-color）
+font-family:sans-serif;     字体
+border-bottom:1px solid black   下边框，黑色实线，例如给标题加下划线
