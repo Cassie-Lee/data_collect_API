@@ -8,10 +8,224 @@
 
 放在css文件中则不需要加style，其他文件上使用css时只需使用link连接到样式文件即可
 <link type="text/css" rel="stylesheet" href="lounge.css">
-rel属性指定l
+rel属性指定了html文件与所链接的文件之间的关系。我们要链接到一个样式表，所以这里使用值“stylesheet”，type信息的类型是“text/css”，换句话说，这是一个
+css样式表。在h5中，不再需要这个属性（这是可选的），不过你可能会在比较老的页面上看到它
+css文件中的注释写法：/*注释*/
+可以创建多个样式表，连接多个样式表，但是样式表的顺序很重要，样式表从上到下排列，最下面的样式表最优先。如果有相同元素属性，会覆盖。
+
+样式继承，可以继承的样式：
+font-family
+font-size
+font-weight
+font-style
+不能继承的样式：
+border
+
+要覆盖继承的属性，可以为其增加一个新规则
+
+创建一个类（class）选择器：元素名.类名
+如果希望某一个类中的所有元素都有同一种样式，可以这样写规则：.classname。即省略元素名
+
+创建元素唯一标识id，使用id选择器与类十分类似，选择id为xx的任意元素：#xx
+或者选择id为xx的一个<p>元素：p#xx
+
+class和id还有一点区别：id选择器只与页面中的一个元素匹配。
+
+子孙选择器：
+div h2     这个规则指出要选择作为一个<div>子孙的所有<h2>
+如果为div指定了id：#id名 h2      这个规则只会选择id唯一的某个div中的h2
+可以通过空格逐级往下选
 
 backgroud-color:red；   背景色 红色
-border：1px solid gray；   边框  1像素线宽，实线，灰色 
-color:maroon;     字体颜色 茶红色 （非font-color,text-color）
-font-family:sans-serif;     字体
+
+border：1px solid gray；   边框  1像素线宽，实线，灰色
+
+color:maroon，silver，aqua，black，blue，fuchsia，gray，green，lime，navy，olive，purple，red，teal，white，yellow;     
+字体颜色 茶红色 （非font-color,text-color）
+
+font-family:sans-serif，Verdana，Geneva，Arial;     字体，sans-serif字体没有衬线，看起来很清晰；默认的serif字体有衬线，
+通常认为这种字体在计算机屏幕上阅读会比较困难。如果一个字体名中包含有空格，要加上引号。
+
 border-bottom:1px solid black   下边框，黑色实线，例如给标题加下划线
+
+font-weight：lighter，normal，bold，bolder；  字体粗细，细，正常，较粗，粗
+
+text-decoration：underline，none，overline，line-through    文本装饰，下划线，上划线，删除线
+
+font-style：italic；   斜体
+
+top   控制元素顶部的位置
+
+text-align：center；    使用这个属性将文本左对齐，居中或者右对齐；如果放在div块元素中，就会使所有的内联内容对齐，包括图像。
+但是text-align属性只能在块元素上设置，如果直接在内联元素如img上使用，则不起作用。
+
+letter-spacing   这个属性能够在字母之间设置间距，如like this
+
+font-style    设置斜体文本
+
+left   指定一个元素的左边所在位置
+
+padding    如果在一个元素边缘和它的内容之间需要有空间，可以使用padding，内边距
+
+line-height：14px，1.2em，150%   这个属性设置一个文本元素中的行间距
+line-height：1；    这是行高的一个特殊用法，行高基于各个元素本身的字体大小，这里是希望行高为其字体大小的一倍
+
+font-size：14px；    字体大小
+用像素指定字体大小时，会明确指出字体具体有多大，与之不同，用一个百分数指定字体大小时，会相对于另一个字体大小指出这个字体有多大，如：
+font-size：150%；    字体大小
+由于font-size是从父元素继承的一个属性，指定一个百分数字体大小时，就是相对于父元素的字体大小。
+font-size：1.2em；    字体大小
+还可以使用em指定字体大小，类似于百分数，这也是一个相对度量单位，使用em时，不是指定一个百分数，而是要指定一个比例因子。即是父元素字体大小的1.2倍。
+font-size：xx-small，x-small，small，medium，large，x-large，xx-large
+只是一种关键字指定字体大小的方法，浏览器会把这些关键字转换为像素值，它会使用浏览器中定义的默认值来完成这个转换
+
+background-image：url(images/background.gif);    用这个属性在元素后面放置一个图像,url可以是一个相对路径，也可以是一个完整的url（http://...）
+
+list-style    这个属性允许你改变列表中列表项的外观
+
+css的盒模型：
+概念：从css的角度看，每个元素就是一个盒子，每个盒子由一个内容区以及可选的内边距，边框和外边距组成
+内容区包含内容，如文本和图像，内容区被可选的透明内边距（padding）包围，内边距周围可能放置一个可选的边框（border）。最后，有一个可选的
+透明外边距（margin）包围所有部分。
+所有元素都被当成盒子：div（逻辑分区），段落、标题、块引用、列表、列表项等，甚至内联元素（如<em>和链接）在css看来也是盒子。
+
+border-color：black；
+border-width：1px，thin，medium，thick；
+border-style：solid，double，groove，outset，dotted，dashed，inset，ridge；  实线，双线，槽线，外凸，虚线，破折线，内凹，脊线
+border-top-color：black；
+border-top-style：dashed；
+border-top-width：thick；
+border-radius：15px；   指定圆角
+border-top-left-radius：3em；
+border-top-right-radius：3em；
+border-bottom-left-radius：0px；
+border-bottom-right-radius：15px；
+
+如何得到一个锯齿型的边框：
+border-style：dashed；
+border-color：white；
+
+padding=25px；   在内容的四周（上下左右）增加25像素的内边距
+padding-left：80px；    设置左外边距，
+margin：30px;     在内容的四周增加30像素的外边距
+margin-right：250px；    设置外边距为250像素
+
+background-image：url(images/background.gif); 
+background-position：top left；   希望背景图像在左上角
+background-repeat：repeat；   设置图像在水平和垂直方向上重复，这是默认行为。
+background-repeat：no-repeat；   希望背景图像不重复，只显示一次
+background-repeat：repeat-x；   图像只在水平方向上重复
+background-repeat：repeat-y；   图像只在垂直方向上重复
+background-repeat：inherit；   按父元素的设置来处理
+
+width：200px；    width属性允许你指定元素内容区的宽度。
+
+一些属性的简写方式（顺序是上右下左，即顺时针方向）：
+内边距：  padding：20px ，padding：0px 20px 30px 10px；
+外边距：  margin：20px ，margin：0px 20px 30px 10px；
+边框简写比内外边距更灵活，因为没有顺序，也不要求数量（border-width，border-style，border-color）border：solid thin #007e7e；
+背景的简写和边框一样：（background-color，background-image，background-repeat等）：
+background：white url(image/xx.gif) repeat-x;
+字体的简写，参考下面的顺序：
+font：font-style font-variant font-weight font-size/line-height font-family
+前三个值是可选的，可以指定这些属性的任意组合，不过他们必须出现在font-size的前面；
+font-size必须指定字体大小；line-height属性是可选的，如果想指定行高，只需要在font-size属性后面加一个/，然后指定你想要的行高。
+最后的字体系列，只需要指定一个字体，不过最好指定一些候选字体，字体名之间使用逗号分隔。
+
+<div>y允许你为块级内容创建逻辑划分，<span>元素则采用类似的方式建立内联内容的逻辑分组。
+
+设置链接的点击样式：
+a:link {color:green;}        这个选择器应用于处于未访问状态的链接
+a:visited {color:red;}        这个选择器应用于已访问的链接
+a:hover {color:yellow;}        悬停在一个链接上时会应用这个选择器
+增加以上规则后，需要先清空浏览器的历史记录，才能看到未访问链接的颜色
+
+计算特定性（css根据特定程度选择覆盖，越特定，越能覆盖之前的属性）：
+000，从左到右，依次判断是否包含id，类或伪类（class，span，pseudo-class），元素名，是就加1分。最终数值越大，就越特定。
+
+我覆盖继承的值时，浏览器怎么知道对<em>应用哪个规则？
+对于css，总会使用最特定的那个规则。所以，如果body有一个规则，对em有一个更特定的规则，它就会使用这个更特定的规则。
+
+在一个属性声明后面最后放置一个“!important”，可以覆盖原有的样式
+
+一个元素的总宽度是内容区宽度，加上所增加的内边距、边框和外边距的宽度。
+一旦设置一个元素的宽度，它不会延伸来占满浏览器窗口的整个宽度。
+text-align是块元素的一个属性，用来将这个块元素中的所有内容对齐，这个属性可以由所有嵌套的块元素继承。
+可以使用子孙选择器来选择嵌套在其他元素中的元素。
+伪类最常用于<a>元素，还有一些伪类包括：hover，active，focus，first-child和last-child
+
+页面的流：
+流实际上就是浏览器在页面上摆放html元素所用的方法。浏览器从html文件最上面开始，从上到下沿着元素流逐个显示所遇到的各个元素。它会在块元素之间加一个
+换行。所以首先会显示文档中的第一个元素，然后是一个换行，然后是第二个元素，接下来又是一个换行，如此继续，从文件最上面一直到文件末尾逐个显示，这就是流。
+块元素从上向下流，各元素之间有一个换行；内联元素在水平方向上会相互挨着，总体上会从左上方流向右下方。
+
+浏览器上下放置两个块元素时，会把它们共同的外边距折叠在一起，折叠的外边距高度就是最大的外边距高度。最终它们之间的外边距就是两方最大的外边距。
+
+float：right
+float属性首先尽可能远地向左或向右浮动一个元素。然后它下面的所有内容都会绕流这个元素。
+对于所有浮动元素都有一个要求：它必须有一个宽度。
+浏览器遇到浮动元素时，会把它尽可能放在最右边。还会从流中删除这个元素，就好像它浮在页面上一样。由于浮动元素已经从正常的流中删除，所以其他块元素
+会跟着填补，就好像根本没有这个浮动元素一样。不过，对内联元素定位时，它们会考虑浮动元素的边界，因此会围绕着浮动元素
+
+解决重叠问题：
+可以使用clear属性来提出请求：当元素流入页面时，在这个元素的左边、右边或两边不允许有浮动内容；clear：right
+浏览器在页面上放置元素时，它会查看页脚右边有没有一个浮动元素，如果有，就会把页脚下移，直至它右边没有浮动内容为止。
+
+流体与冻结设计：
+目前为止，我们采用的所有涉及都称为流体布局，因为不论我们将浏览器调整到多大的宽度，布局都会扩展，填满整个浏览器，这些布局很有用，因为通过扩展，
+它们会填充可用的空间，使用户能够充分利用它们的屏幕空间。
+不过，有时让布局锁定可能更重要，这样一来，当用户调整屏幕大小时，你的设计仍能保持原样，这称为冻结布局。冻结布局会锁定元素，让它们冻结在页面上，
+这样这些元素根本不能移动，我们就能避免由于窗口扩展带来的很多问题。
+
+在html中，增加一个div元素，id为allcontent。开始标记放在body的header前面，结束标记放在结尾，就是说放在body开头结尾，包含body全部内容。
+然后在css里给这个div指定一个宽度width。
+
+冻结布局有一些优点，不过浏览器加宽时看起来也不太好，这里可以采用凝胶布局，比如，在页面冻结之后，再加上margin-left：auto；margin-right：auto
+这样当浏览器加宽时，浏览器会根据需要扩展内容区，这里浏览器会自动确定正确的左外边距和右外边距。
+
+绝对定位：
+一个元素绝对定位时，浏览器首先要做的是将它从流中完全删除，然后浏览器将这个元素放置在top和right属性指定的位置上（也可以使用bottom和left指定位置）。
+如：
+position：absolute；
+top：100px；
+right：200px；
+width：280px；
+这里，这个元素会放在距页面上边100像素、距页面右边200像素的位置上。width是元素的内容区宽度。
+绝对定位的元素会从流中删除，其他元素会将其完全忽略。即绝对定位元素对其他元素没有任何影响。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+这么说，除了大小，看来不能对内边距和外边距指定样式，是吗？
+基本正确。内边距和外边距都是用来提供更多可见的空间，不能对内外边距指定颜色，也不能加任何装饰。不过由于它们是透明的，所以他们会呈现背景颜色
+或背景图像。内外边距之间有一个区别：元素的背景颜色或图像会延伸到内边距下面，但不会延伸到外边距。
+
+子孙选择器是怎么工作的？
+#elixirs h2     这个子孙选择器会选择这个div元素中嵌套的所有<h2>，而不论它嵌套的有多深
+#elixirs>h2    这种方法可以选择直接的孩子，只有当h2是一个id为elixrs元素的直接孩子时，才会选择这个h2
+也可以通过空格，逐级选择下去
+
+可以浮动内联元素吗？
+可以，最好的例子就是浮动图像
+
+指定位置时必须使用像素来指定吗？
+不，指定元素还有一种常用的方法--可以使用百分数。如果使用百分数，改变浏览器宽度时，元素的位置可能会改变。是相对于浏览器的宽度而言。
+百分数还用于指定宽度，如果不需要为元素或外边距指定特定的宽度，就可以使用百分数，在两栏和三栏布局中会经常看到这种用法。
+
