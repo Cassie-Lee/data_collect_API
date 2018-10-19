@@ -1,0 +1,47 @@
+https://blog.csdn.net/Jack_wise/article/details/80690826
+
+vue-cli 使用vue脚手架快速搭建前台项目
+2.安装vue
+   npm install vue -g
+
+3.安装vue-cli
+   npm install  vue-cli -g
+
+4.下载vue模板并进行初始化
+
+ vue init  模板名称  项目名称  for example： vue init webpack-develop  vue
+
+ 模板可以到vue官网下载，到  https://github.com/vuejs-templates 下载对应的模板压缩包，解压到当前目录​ 
+
+ 使用如下命令创建项目并初始化项目模板
+
+  vue init ./webpack-develop vue
+
+5.然后根据提示，输入对应信息
+
+  然后继续按回车显示下面的既初始化完成
+
+6.然后按照提示，执行下列命令
+
+  cd vue     //进入所创建的项目文件夹vue
+
+  npm run dev   //启动项目
+
+  然后在网页中打开  http://localhost:8080  显示下面的既表示运行成功
+
+
+  http://element-cn.eleme.io/#/zh-CN/component/dialog
+  
+  软件篇：
+  pycharm
+  vscode
+  element
+  vue-router
+  vue-cli
+  vscode的各种插件
+  postman
+  mysql workbench
+  beyond compare
+  
+  
+  回顾整个工作流程：记录详细案例，技术流程
