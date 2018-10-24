@@ -100,15 +100,31 @@ https://blog.csdn.net/qq_33988065/article/details/79193714
 https://blog.csdn.net/u012814856/article/details/80684376
 https://blog.csdn.net/Jack_wise/article/details/80690826
 
+vscode 进入全屏/退出全屏  的快捷键都是 F11 ;
+
+http://www.debugrun.com/a/pvsT9UP.html
+
+data:function(){
+   return {
+    total:0,//默认数据总数
+    pagesize:7,//每页的数据条数
+    currentPage:1,//默认开始页面
+   }
+  }
+<el-table :data="searchInfo.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 100%">
 
 
+scope.row可以吧当前行当做参数传进去，然后在方法里面直接用就行
+这是vue在2.1新增的作用域插槽，作用域插槽更典型的用例是在列表组件中，允许使用者自定义如何渲染列表的每一项
 
+https://blog.csdn.net/dearwind153/article/details/77942479
+https://www.cnblogs.com/imshome/p/8422311.html
 
+https://blog.csdn.net/Jack_wise/article/details/80690826
 
+https://segmentfault.com/a/1190000013260728
 
-
-
-
+https://www.jianshu.com/p/0b0222954483
 
 
 
