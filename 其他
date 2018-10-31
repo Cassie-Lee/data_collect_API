@@ -1,0 +1,7 @@
+后缀名为vsdx的流程图文件，需要安装visio professional打开
+
+搭建python3开发环境，安装相关包：
+建一个项目文件夹：
+安装python3：安装到项目文件夹下（多python版本环境）
+安装django：在项目文件夹中安装，和python3同一根目录，定位到此目录，执行“python3 -m pip install django”
+安装数据库pymysql：定位到项目文件夹，执行“python3 -m pip install django”
