@@ -60,6 +60,9 @@ new Vue({
   components:{App},
   template:'<App/>'
 })
+assets文件中一般放置css文件、images和javascripts（js方法）
+components文件可放置公共vue页面
+可创建一个类似pages的文件夹，用于放置单vue页面
 
 index.html
 
