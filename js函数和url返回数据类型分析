@@ -1,0 +1,47 @@
+js函数
+export.js
+
+# 导出函数
+export function downloadExcel(querys = {}, url = "") {
+  if (Object.keys(querys).length>=1) {
+    url += "?";
+    Object.keys(querys).forEach(key => {
+      url += `${key}=${querys[key]}&`;
+    });
+    url = url.slice(0, url.length - 1);
+  }
+  window.location.href = url;
+}
+
+# 处理表格数据
+export function sliceIp(url) {
+  let positions = [];
+  let pos = url.indexOf("/");
+  let ip = "";
+  while (pos > -1) {
+    positions.push(pos);
+    pos = url.indexOf("/", pos + 1);
+  }
+  if (positions[2]) {
+    ip = url.slice(positions[1] + 1, positions[2]);
+  } else {
+    ip = url.slice(positions[1] + 1);
+  }
+  return ip;
+}
+
+url返回数据类型分析
+默认加载的全部数据  data：[]
+[{a:'b',c:'d'},{e:'f',g:'h'}....]
+默认加载的选择框数据，如  regionMsg:[]
+假如只有单条数据，后端直接传回一个列表即可
+假如数据不止一个选择框需要数据，可以集中到一个url，把各个选择框数据都查询到，放在一个对象中，需要其中一个数据时，取出相应数据即可
+resp.data.regionName
+此时返回的数据类型类似于：
+{key1:[1,2,3],key2:[3,4,5],...}
+级联关系：
+当只有一个级联关系时，返回一个列表即可，当有多个级联数据时，也可以采用返回对象的形式
+总结：数据类型一般是以下四种：列表、字典（前端称作对象）、包含字典的列表，包含列表的字典
+列表方便遍历，适合批量操作，字典适合于分类
+
+
