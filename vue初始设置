@@ -103,3 +103,37 @@ module.exports = {
   }
 }
 配置target
+
+一般来说网站大多数页面会有一些共同的组件，比如头部的全局导航条，这时候不用给每个页都加一个组件，而是把这个公共部分放在所有单页之上
+配置路由的时候把其他需要用到此组件的页面放到其children中，公共组件常见类似配置如下：
+index.vue（可自由命名)
+
+<template>
+  <div class='wrapper'>
+    <el-container>
+      <el-header>
+        <header-page></header-page>
+      </el-header>
+      <el-container>
+        <keep-alive>
+          <router-view v-if="$route.meta.keepAlive"></router-view>
+        </keep-alive>
+        <router-view v-if="!$route.meta.keepAlive"></router-view>
+      </el-container>
+    </el-container>
+  </div>
+</template>
+<script>
+import headerPage from './headerPage'
+import capacityAside from '@/components/capacityAside'
+export default {
+  name:'wrapper',
+  components:{
+    headerPage,
+    capacityAside
+  }
+}
+</script>
+<style scoped>
+</style>
+
