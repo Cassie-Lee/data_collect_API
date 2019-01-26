@@ -1,0 +1,208 @@
+组件调用
+有的时候，一个页面需要调用另一个页面，比如：为每一个页面添加一个共同的纵向导航栏
+operationCluster.vue
+
+<template>
+  <div class="content">
+    <div class="aside">
+      # 导入纵向导航栏，组件调用，调用的是operationCluster组件，调用的时候写作短横线连接的形式
+      <operation-aside></operation-aside>
+    </div>
+    <div class="main">
+      <div class="baseDiv">
+      <div class="choose-export">
+      # 选择和导出框，处于同一水平线上，选择框是点击下拉的模式
+      <el-button size="medium" plain @click="visible=!visible">
+        选择<i class="el-icon-arrow-down el-icon--right"></i>
+      </el-button>
+      <div class="dropdowm" id="dropdown-id" v-if="visible">
+      # 下拉选择框，未点击选择框时，选项内容不可见，点击后选择下拉框可见
+        <el-row>
+        # 关闭下拉框的叉叉
+          <el-col :span="24">
+            <i class="el-icon-close fr btnClose" @click="visible=false"></i>
+          </el-col>
+        </el-row>
+        <el-form :inline="true" ref="form" method="post" :form="form">
+        # 下拉框选项
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="区域">
+                # 选择框
+                  <el-select v-model="form.regionName" multiple collapse-tags filterable placeholder="请选择">
+                    <el-option v-for="item in regionMsg" :key="item" :label="item" :value="item">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="可用区">
+                  <el-select v-model="form.azName" multiple  collapse-tags filterable placeholder="请选择">
+                    <el-option v-for="item in azMsg" :key="item" :label="item" :value="item">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="集群">
+                # 输入框
+                  <el-input v-model="form.clusterName" placeholder="可输入多个搜索,隔开"></el-input>
+                </el-form-item>
+              </el-col>
+              ......
+              <el-col :span="24">
+              # 搜素框，点击搜索，启动搜索
+                <el-button class="fs" @click="searchMsg">搜索</el-button>
+              </el-col>
+            </el-row>
+        </el-form>
+      </div>
+      # 导出框
+      <el-button size="medium" plain class="export" @click="exportExcel">导出</el-button>
+    </div>
+      <div class="tablePadding">
+      # 表格展示，data中存储全部数据，采用分页的形式展示
+        <el-table :data="data.slice((currentPage-1)*pagesize,currentPage*pagesize)" border show-overflow-tooltip stripe style="width:100%">
+          <el-table-column prop="clusterName" label="集群" sortable show-overflow-tooltip width="230"></el-table-column>
+          <el-table-column prop="clusterAttribute" label="集群属性" sortable show-overflow-tooltip width="105"></el-table-column>
+          ......
+          <el-table-column prop="hypervisorNum" label="hypervisor数" sortable show-overflow-tooltip width="135">
+          # 下钻功能，scope.row表示传入当前行
+          <template slot-scope="scope">
+            <el-button type="text" @click="showHypervisorDetail(scope.row)">{{scope.row.hypervisorNum}}</el-button>
+          </template>
+          </el-table-column>
+          <el-table-column prop="vmNum" label="vm数" sortable show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-button type="text" @click="showVmDetail(scope.row)">{{scope.row.vmNum}}</el-button>
+          </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="block">
+      # 分页功能，控制翻页
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10,15,20,50,100]" :page-size="pagesize" layout="total,sizes,prev,pager,next,jumper" :total="data.length">
+        </el-pagination>       
+      </div>
+     </div>
+     # 弹出对话框，对应下钻
+     <el-dialog :title="hypervisorTop" :visible.sync="hypervisorVisible" @close="closeDialog" v-if="hypervisorVisible" width="80%" center>
+       <hypervisor-detail :currentCluster="currentCluster"></hypervisor-detail>
+     </el-dialog>
+     <el-dialog :title="vmTop" :visible.sync="vmVisible" @close="closeDialog" v-if="vmVisible" width="80%" center>
+       <vm-detail :currentCluster="currentCluster"></vm-detail>
+     </el-dialog>
+    </div>
+  </div>
+</template>
+
+<script>
+import operationAside from '../components/operationAside';
+import hypervisorDetail from '../components/hypervisorDetail';
+import vmDetail from '../components/vmDetail';
+import * as Export from '../assets/javascripts/export.js';
+export default {
+  data() {
+    return {
+      data: [],
+      currentPage: 1,
+      pagesize: 20,
+      visible: false,
+      hypervisorVisible:false,
+      vmVisible:false,
+      hypervisorTop:"主机详情",
+      vmTop:"虚拟机详情",
+      regionMsg:[],
+      azMsg:[],
+      currentCluster:{},
+      form:{
+        regionName:'',
+        azName:'',
+        clusterName:''
+      }
+    }
+  },
+  components: {
+    operationAside,
+    hypervisorDetail,
+    vmDetail
+  },
+  watch:{
+    'form.regionName':function(newValue,oldValue) {
+      this.$http
+        .post('/operationPortal/azInfo/', {          //可用区url
+          form:this.form.regionName
+        })
+        .then(resp => {
+          this.azMsg=resp.data
+        })
+        .catch(error=> {
+          console.log(error)
+        })
+    },
+    deep:true
+  },
+  methods:{
+    handleSizeChange(size) {
+      this.pagesize=size
+    },
+    handleCurrentChange(currentPage) {
+      this.currentPage=currentPage
+    },
+    showHypervisorDetail(currentCluster) {
+      this.hypervisorVisible = true,
+      this.currentCluster = currentCluster
+    },
+    showVmDetail(currentCluster) {
+      this.vmVisible = true,
+      this.currentCluster = currentCluster
+    },
+    closeDialog() {    
+      this.hypervisorVisible = false,
+      this.vmVisible = false
+    },
+    searchMsg() {
+      //点击搜索
+      this.visible=false
+      this.$http
+        .post('/operationPortal/operationCluster/',{                      //后端url
+          form:this.form
+        })
+        .then(resp=> {
+          this.data=resp.data
+          this.currentPage=1
+        })
+    },
+    exportExcel() {
+      //导出Excel
+      const querys={
+        regionName:this.form.regionName,
+        azName:this.form.azName,
+        clusterName:this.form.clusterName    
+      }
+      const url ='/operationPortal/operationCluster/download/'          //后端url
+      Export.downloadExcel(querys,url)
+    },
+    loadingMsg() {
+      //默认加载数据
+      this.$http
+        .post('/operationPortal/operationCluster/')   //后端url
+        .then(resp=>{
+          this.data = resp.data
+        })
+      this.$http
+        .get('/operationPortal/regionInfo/')      //region url
+        .then(resp=> {
+          this.regionMsg = resp.data.regionName
+        })
+    }
+  },
+  mounted() {
+    //页面加载后执行函数
+    this.loadingMsg()
+  }
+}
+</script>
+
+<style scoped>
+</style>
