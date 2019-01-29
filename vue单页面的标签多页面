@@ -1,0 +1,251 @@
+总标签页面：
+<template>
+  <div class="content">
+    <div class="aside">
+      <capacity-aside></capacity-aside>
+    </div>
+    <div class="main">
+      <div class="mainDivs">
+        <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
+          <el-tab-pane label="按region统计" name="first">
+            <region-capacity ref="childFirst"></region-capacity>
+          </el-tab-pane>
+          <el-tab-pane label="按az统计" name="second">
+            <az-capacity ref="childSecond"></az-capacity>
+          </el-tab-pane>
+          <el-tab-pane label="按pod统计" name="three">
+            <pod-capacity ref="childThree"></pod-capacity>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import regionCapacity from "../pages/regionCapacity";
+import azCapacity from "../pages/azCapacity";
+import podCapacity from "../pages/podCapacity";
+import capacityAside from "../components/capacityAside";
+export default {
+  data() {
+    return {
+      data: [],
+      activeName: "first"
+    };
+  },
+  components: {
+    regionCapacity,
+    azCapacity,
+    podCapacity,
+    capacityAside
+  },
+  methods: {
+    handleClick(tab, event) {
+      // console.log(this.$refs.childFirst.bridge)
+      if (event.target.id == "tab-first") {
+        this.$refs.childFirst.bridge();
+      } else if (event.target.id == "tab-second") {
+        this.$refs.childSecond.bridge();
+      } else {
+        this.$refs.childSix.bridge();
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+</style>
+
+
+分标签页面：
+<template>
+  <div class="mainDiv">
+    <div class="choose-export">
+      <el-button size="medium" plain @click="visible=!visible">
+        选择<i class="el-icon-arrow-down el-icon--right"></i>
+      </el-button>
+      <div class="dropdowm" id="dropdown-id" v-if="visible">
+        <el-row>
+          <el-col :span="24">
+            <i class="el-icon-close fr btnClose" @click="visible=false"></i>
+          </el-col>
+        </el-row>
+        <el-form :inline="true" ref="form" method="post" :form="form">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="region">
+                  <el-select v-model="form.regionName" multiple collapse-tags filterable placeholder="请选择">
+                    <el-option v-for="item in regionMsg" :key="item" :label="item" :value="item">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="可用区">
+                  <el-select v-model="form.azName" multiple  collapse-tags filterable placeholder="请选择">
+                    <el-option v-for="item in azMsg" :key="item" :label="item" :value="item">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="pod名">
+                  <el-input v-model="form.podName" placeholder="可输入多个搜索,隔开"></el-input>
+                  <!-- <el-select v-model="form.podName" multiple collapse-tags filterable placeholder="可输入多个搜索,隔开">
+                    <el-option v-for="item in podMsg" :key="item" :label="item" :value="item">
+                    </el-option>
+                  </el-select> -->
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-button class="fs" @click="searchMsg">搜索</el-button>
+              </el-col>
+            </el-row>
+        </el-form>
+      </div>
+      <el-button size="medium" plain class="export" @click="exportExcel">导出</el-button>
+    </div>
+    <div class="tablePadding">
+        <el-table :data="data.slice((currentPage-1)*pagesize,currentPage*pagesize)" show-summary :summary-method="getSummaries" border show-overflow-tooltip stripe style="width:100%">
+          <el-table-column prop="regionName" label="Region" sortable show-overflow-tooltip width="130"></el-table-column>
+          <el-table-column prop="azName" label="可用区" sortable show-overflow-tooltip width="135"></el-table-column>
+          <el-table-column prop="podName" label="pod名" sortable show-overflow-tooltip width="175"></el-table-column>
+          <el-table-column prop="hostNum" label="主机数" sortable show-overflow-tooltip width="90"></el-table-column>
+          <el-table-column prop="separateNum" label="隔离主机数" sortable show-overflow-tooltip width="115"></el-table-column>
+          <el-table-column prop="allocatedVmNum" label="已发放vm数" sortable show-overflow-tooltip width="125"></el-table-column>
+          <el-table-column prop="totalVcpu" label="总vcpu(个)" sortable show-overflow-tooltip width="115"></el-table-column>
+          <el-table-column prop="totalMem" label="总内存(TB)" sortable show-overflow-tooltip width="115"></el-table-column>
+          <el-table-column prop="alloctedVcpu" label="已分配vcpu(个)" sortable show-overflow-tooltip width="145"></el-table-column>
+          <el-table-column prop="alloctedMem" label="已分配内存(TB)" sortable show-overflow-tooltip width="145"></el-table-column>
+          <el-table-column prop="freeVcpu" label="剩余可发放vcpu" sortable show-overflow-tooltip width="150"></el-table-column>
+          <el-table-column prop="freeMem" label="剩余可发放内存(TB)" sortable show-overflow-tooltip width="175"></el-table-column>
+          <el-table-column prop="vcpuAllocatedRate" label="vcpu分配率" sortable show-overflow-tooltip width="120"></el-table-column>
+          <el-table-column prop="memAllocatedRate" label="内存分配率" sortable show-overflow-tooltip width="115"></el-table-column>
+        </el-table>
+    </div>
+    <div class="block">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10,15,20,50,100]" :page-size="pagesize" layout="total,sizes,prev,pager,next,jumper" :total="data.length">
+      </el-pagination>       
+    </div>
+  </div>
+</template>
+
+<script>
+import * as Export from '../assets/javascripts/export.js' 
+export default {
+  data() {
+    return {
+      data: [],
+      currentData: [],
+      currentPage: 1,
+      pagesize:20,
+      currentApp: {},
+      visible:false,
+      regionMsg:[],
+      azMsg:[],
+      podMsg:[],
+      form:{
+        regionName:'',
+        azName:'',
+        podName:''
+      }
+    }
+  },
+  watch:{
+    'form.regionName':function(newValue,oldValue) {
+      this.$http
+        .post('/capacityManage/azInfo/', {          //可用区url
+          form:this.form.regionName
+        })
+        .then(resp => {
+          this.azMsg=resp.data
+        })
+        .catch(error=> {
+          console.log(error)
+        })
+    },
+    deep:true
+  },
+  methods:{
+    getSummaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      let num = 6;
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计';
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return Math.floor((prev + curr)*100)/100;
+            } else {
+              return prev;
+            }
+          }, 0);
+          // sums[index] += ' ';
+        } else {
+          sums[index] = ' --';
+        }
+      });
+      sums[num+6] = Math.floor((sums[num+2]/sums[num])*10000)/100 + "%";
+      sums[num+7] = Math.floor((sums[num+3]/sums[num+1])*100).toFixed(2) + "%";
+      return sums;
+    },
+    handleSizeChange(size) {
+      this.pagesize=size
+    },
+    handleCurrentChange(currentPage) {
+      this.currentPage=currentPage
+    },
+    searchMsg() {
+      //点击搜索
+      this.visible=false
+      this.$http
+        .post('/capacityManage/podCompute/',{                      //后端url
+          form:this.form
+        })
+        .then(resp=> {
+          this.data=resp.data
+          this.currentPage=1
+        })
+    },
+    exportExcel() {
+      //导出Excel
+      const querys={
+        regionName:this.form.regionName,
+        azName:this.form.azName,
+        podName:this.form.podName
+      }
+      const url ='/capacityManage/podCompute/download/'          //后端url
+      Export.downloadExcel(querys,url)
+    },
+    bridge() {
+      //点击加载数据
+      this.loadingMsg();
+      this.$http
+        .post('/capacityManage/podCompute/')   //后端url
+        .then(resp=>{
+          this.data = resp.data
+        })
+    },
+    loadingMsg() {
+      //默认加载数据
+      this.$http
+        .get('/capacityManage/regionInfo/')      //region url
+        .then(resp=> {
+          this.regionMsg = resp.data.regionName
+          this.podMsg = resp.data.podName
+        })
+    },
+  },
+}
+</script>
+
+<style scoped>
+</style>
