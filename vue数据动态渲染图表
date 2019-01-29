@@ -1,1 +1,628 @@
+主页面：
+<template>
+  <div class="content">
+    <isolatedhost-Management></isolatedhost-Management>
+    <div class="main">
+      <div class="baseDiv">
+        <el-form ref="form" :model="form" label-width="5rem">
+          <el-row>
+            <el-col class="col-tenant" :span="12">
+              <el-form-item label="用户名称">
+                <el-input v-model="form.customer_name" placeholder="请输入用户名称"></el-input>
+              </el-form-item>
+              <el-form-item label="租户ID">
+                <el-input v-model="form.tenant_id" placeholder="请输入租户ID"></el-input>
+              </el-form-item>
+              <el-form-item label="所在区域">
+                <el-select v-model="form.t_region_name" placeholder="请选择区域" multiple collapse-tags filterable>
+                  <el-option v-for="item in azMsg" :key="item" :label="item" :value="item"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-button class="tenant-button" @click="searchTenant">查询</el-button>
+            </el-col>
+          </el-row>
+        </el-form>
+        <div class="tablePadding">
+          <el-table
+            :data="tenantData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+            border
+            stripe
+            show-overflow-tooltip
+            style="width: 100%;"
+            v-loading="loading">
+            <el-table-column label="用户名称" prop="customer_name"></el-table-column>
+            <el-table-column label="用户类别" prop="sort_name" sortable show-overflow-tooltip width="150"></el-table-column>
+            <el-table-column label="Domain_id" prop="domain_id" sortable show-overflow-tooltip width="300"></el-table-column>
+            <el-table-column label="用户等级" prop="customer_level_name" sortable show-overflow-tooltip width="120"></el-table-column>
+            <el-table-column label="租户id" prop="tenant_id" sortable show-overflow-tooltip width="500"></el-table-column>
+            <el-table-column label="区域名称" prop="t_region_name" sortable show-overflow-tooltip width="150"></el-table-column>
+            <el-table-column label="VM详情" prop="VM_detail" sortable show-overflow-tooltip width="206">
+                <template slot-scope="scope">
+                    <el-button type="text" @click="showDetails(scope.row)">查看詳情</el-button>
+                </template>
+            </el-table-column>
+          </el-table>
+          <div class="block">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="currentPage"
+              :page-sizes="[10, 15, 20, 50,100]"
+              :page-size="pagesize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="tenantData.length"></el-pagination>
+          </div>
+          <el-dialog class="detail" :visible.sync="dialogVisible" width="80%" center v-if="dialogVisible">
+            <tenant-details :tenant="currentVm"></tenant-details>
+          </el-dialog>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import isolatedhostManagement from "../components/isolatedhostManagement";
+import tablePage from "../components/table";
+import tenantDetails from '../components/tenantDetails'
+export default {
+  components: {
+    isolatedhostManagement,
+    tablePage,
+    tenantDetails
+  },
+  data() {
+    return {
+      loading: false,
+      tenantData: [],
+      currentPage: 1,
+      dialogVisible:false,
+      pagesize: 20,
+      form: {
+        customer_name:'',
+        tenant_id:'',
+        t_region_name:[]
+      },
+      azMsg:[],
+      currentVm:{},
+      visible: false,
+    };
+  },
+  methods: {
+    searchTenant() {
+      this.visible = false;
+      this.loading = true;
+      this.$http
+        .post("/operationManage/tenantInfo/", {
+          form: this.form
+        })
+        .then(resp => {
+          this.tenantData = resp.data;
+          this.loading = false;
+          this.currentPage=1
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    handleSizeChange(size) {
+      this.pagesize = size;
+    },
+    handleCurrentChange(currentPage) {
+      this.currentPage = currentPage;
+    },
+    showDetails(tenant) {
+      this.dialogVisible = true
+      this.currentVm = {
+        customer_name: tenant.customer_name,
+      }
+    },
+  },
+  mounted() {
+    this.$http
+      .get('/operationManage/tenantInfo/')
+      .then(resp => {
+        this.tenantData = resp.data
+        this.loading = false
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    this.$http
+        .get("/operationManage/regionInfo/")
+        .then(resp => {
+          const data = resp.data;
+          this.azMsg = data.regionName;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+  }
+};
+</script>
+<style>
+.col-tenant .el-form-item {
+    float: left;
+}
+.col-tenant .tenant-button{
+  margin-left: 20px;
+}
+</style>
 
+下钻动态渲染页面：
+<template>
+  <div class="content">
+    <isolatedhost-Management></isolatedhost-Management>
+    <div class="main">
+      <div class="baseDiv">
+        <el-form ref="form" :model="form" label-width="5rem">
+          <el-row>
+            <el-col class="col-tenant" :span="12">
+              <el-form-item label="用户名称">
+                <el-input v-model="form.customer_name" placeholder="请输入用户名称"></el-input>
+              </el-form-item>
+              <el-form-item label="租户ID">
+                <el-input v-model="form.tenant_id" placeholder="请输入租户ID"></el-input>
+              </el-form-item>
+              <el-form-item label="所在区域">
+                <el-select v-model="form.t_region_name" placeholder="请选择区域" multiple collapse-tags filterable>
+                  <el-option v-for="item in azMsg" :key="item" :label="item" :value="item"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-button class="tenant-button" @click="searchTenant">查询</el-button>
+            </el-col>
+          </el-row>
+        </el-form>
+        <div class="tablePadding">
+          <el-table
+            :data="tenantData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+            border
+            stripe
+            show-overflow-tooltip
+            style="width: 100%;"
+            v-loading="loading">
+            <el-table-column label="用户名称" prop="customer_name"></el-table-column>
+            <el-table-column label="用户类别" prop="sort_name" sortable show-overflow-tooltip width="150"></el-table-column>
+            <el-table-column label="Domain_id" prop="domain_id" sortable show-overflow-tooltip width="300"></el-table-column>
+            <el-table-column label="用户等级" prop="customer_level_name" sortable show-overflow-tooltip width="120"></el-table-column>
+            <el-table-column label="租户id" prop="tenant_id" sortable show-overflow-tooltip width="500"></el-table-column>
+            <el-table-column label="区域名称" prop="t_region_name" sortable show-overflow-tooltip width="150"></el-table-column>
+            <el-table-column label="VM详情" prop="VM_detail" sortable show-overflow-tooltip width="206">
+                <template slot-scope="scope">
+                    <el-button type="text" @click="showDetails(scope.row)">查看詳情</el-button>
+                </template>
+            </el-table-column>
+          </el-table>
+          <div class="block">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="currentPage"
+              :page-sizes="[10, 15, 20, 50,100]"
+              :page-size="pagesize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="tenantData.length"></el-pagination>
+          </div>
+          <el-dialog class="detail" :visible.sync="dialogVisible" width="80%" center v-if="dialogVisible">
+            <tenant-details :tenant="currentVm"></tenant-details>
+          </el-dialog>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import isolatedhostManagement from "../components/isolatedhostManagement";
+import tablePage from "../components/table";
+import tenantDetails from '../components/tenantDetails'
+export default {
+  components: {
+    isolatedhostManagement,
+    tablePage,
+    tenantDetails
+  },
+  data() {
+    return {
+      loading: false,
+      tenantData: [],
+      currentPage: 1,
+      dialogVisible:false,
+      pagesize: 20,
+      form: {
+        customer_name:'',
+        tenant_id:'',
+        t_region_name:[]
+      },
+      azMsg:[],
+      currentVm:{},
+      visible: false,
+    };
+  },
+  methods: {
+    searchTenant() {
+      this.visible = false;
+      this.loading = true;
+      this.$http
+        .post("/operationManage/tenantInfo/", {
+          form: this.form
+        })
+        .then(resp => {
+          this.tenantData = resp.data;
+          this.loading = false;
+          this.currentPage=1
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    handleSizeChange(size) {
+      this.pagesize = size;
+    },
+    handleCurrentChange(currentPage) {
+      this.currentPage = currentPage;
+    },
+    showDetails(tenant) {
+      this.dialogVisible = true
+      this.currentVm = {
+        customer_name: tenant.customer_name,
+      }
+    },
+  },
+  mounted() {
+    this.$http
+      .get('/operationManage/tenantInfo/')
+      .then(resp => {
+        this.tenantData = resp.data
+        this.loading = false
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    this.$http
+        .get("/operationManage/regionInfo/")
+        .then(resp => {
+          const data = resp.data;
+          this.azMsg = data.regionName;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+  }
+};
+</script>
+<style>
+.col-tenant .el-form-item {
+    float: left;
+}
+.col-tenant .tenant-button{
+  margin-left: 20px;
+}
+</style>
+
+动态图表渲染页面：
+<template>
+  <div class="app-detail">
+    <el-container>
+      <el-header class="detail-overview" style="height:auto">
+         <el-row :gutter="20">
+            <el-col :span="12">
+                <div class="bar-container"></div>
+            </el-col>
+            <el-col :span="6">
+                <h3 class="vcpu-title">Vcpu分配率</h3>
+                <div class="round-vcpu-container"></div>
+            </el-col>
+            <el-col :span="6">
+                <h3 class="storage-title">内存分配率</h3>
+                <div class="round-storage-container"></div>
+            </el-col>
+        </el-row>
+      </el-header>
+      <el-main class="detail-content">
+        <el-table :data="regionData.slice((currentPage-1)*pagesize,currentPage*pagesize)" show-overflow-tooltip border stripe style="width:100%">
+          <el-table-column prop="clusterName" label="集群名" show-overflow-tooltip width="200"></el-table-column>
+          <el-table-column prop="podName" label="pod名" show-overflow-tooltip width="170"></el-table-column>
+          <el-table-column prop="totalHostNum" label="主机数" show-overflow-tooltip ></el-table-column>
+          <el-table-column prop="separateNum" label="隔离主机数" show-overflow-tooltip width="105"></el-table-column>
+          <el-table-column prop="allocatedVmNum" label="已发放vm数" show-overflow-tooltip width="105"></el-table-column>
+          <el-table-column prop="totalVcpuNum" label="总vcpu(个)" show-overflow-tooltip width="105"></el-table-column>
+          <el-table-column prop="allocatedVcpuNum" label="已分配vcpu(个)" show-overflow-tooltip width="130"></el-table-column>
+          <el-table-column prop="toatalMem" label="总内存(GB)" show-overflow-tooltip width="105"></el-table-column>
+          <el-table-column prop="allocatedMem" label="已分配内存" show-overflow-tooltip width="105"></el-table-column>
+          <el-table-column prop="freeVcpuNum" label="剩余可发放vcpu" show-overflow-tooltip width="135"></el-table-column>
+          <el-table-column prop="freeMem" label="剩余可发放内存" show-overflow-tooltip width="135"></el-table-column>
+          <el-table-column prop="vcpuAllocatedRate" label="vcpu分配率" show-overflow-tooltip width="105"></el-table-column>
+          <el-table-column prop="memAllocatedRate" label="内存分配率" show-overflow-tooltip width="105"></el-table-column>
+        </el-table>
+      </el-main>
+    </el-container>
+    <div class="block">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5,10,15,50]" :page-size="Number(pagesize)" layout="total,sizes,prev,pager,next,jumper" :total="regionData.length">
+        </el-pagination>
+    </div>
+  </div>
+</template>
+
+<script>
+import echarts from 'echarts'
+export default {
+    data() {
+        return {
+            regionData:[],
+            currentPage:1,
+            pagesize:5
+        }
+        },
+    props:{
+        currentRegion:{}
+    },
+    mounted(){
+      this.loadingMsg()
+      this.drawBar()
+      this.drawVcpuRound()
+      this.drawStorageRound()
+    },
+    methods: {
+        handleSizeChange(size) {
+            this.pagesize=size
+        },
+        handleCurrentChange(currentPage) {
+            this.currentPage=currentPage
+        },
+        loadingMsg() {
+        this.$http
+        .post('/capacityManage/regionCompute/regionDrilldown/',{
+            currentRegion:this.currentRegion.regionName
+        })
+        .then(resp=>{
+            this.regionData=resp.data
+        })
+        },
+        drawBar() {
+            const barContainer = echarts.init(
+                document.querySelector('.detail-overview .bar-container'))
+                this.$http
+                    .post('/capacityManage/regionCompute/regionFlavor/',{
+                        currentRegion:this.currentRegion.regionName
+                        })
+                    .then(resp=> {
+                        barContainer.setOption({
+                            color:['#3398DB'],
+                            grid:{
+                                left:'3%',
+                                right:'4%',
+                                bottom:'3%',
+                                containLabel:true
+                            },
+                            tooltip:{
+                                show: true,
+                                trigger:'item'
+                            },
+                            xAxis:[
+                                {
+                                    type:'category',
+                                    data:resp.data.dataKeyList,
+                                    axisLine:{
+                                        lineStyle:{
+                                            color:'#fff'
+                                        }
+                                    },
+                                    axisLabel:{
+                                        rotate:45,
+                                        show:true,
+                                        textStyle:{
+                                            color:'#3398DB',
+                                            fontsize:'16'
+                                        }
+                                    },
+                                    axisTick:{
+                                        alignWidthLabel:true
+                                    }
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    show:false,
+                                    type:'value'
+                                }
+                            ],
+                            series: [
+                                {
+                                    name:'',
+                                    type:'bar',
+                                    barWidth:'70%',
+                                    label: {
+                                        normal:{
+                                            show:true,
+                                            position:'top'
+                                        }
+                                    },
+                                    data:resp.data.dataList,
+                                    axisLabel:['数据1','数据2','数据3','数据4','数据5']
+                            }
+                        ]
+                    })
+            })
+        },
+        drawVcpuRound() {
+            const roundVcpuContainer = echarts.init(
+                document.querySelector('.detail-overview .round-vcpu-container'))
+                        roundVcpuContainer.setOption({
+                            tooltip:{
+                                show:false
+                            },
+                            legend: {
+                                orient:'vertical',
+                                x:'left',
+                                data:['88%']
+                            },
+                            itemStyle: {
+                                color:'#3398DB'
+                            },
+                            series: [
+                                {
+                                    name:'',
+                                    type:'pie',
+                                    radius:['50%','60%'],
+                                    label:{
+                                        normal:{
+                                            position:'center',
+                                            formatter:'{c}',
+                                            textStyle:{
+                                                color:'#3398DB',
+                                                fontSize:27
+                                            }
+                                        }
+                                    },
+                                    data:[
+                                        {
+                                        value:this.currentRegion.vcpuAllocatedRate,
+                                        name:'',
+                                        hoverAnimation:false
+                                        }
+                                        ]
+                                },
+                                {
+                                    name:'',
+                                    type:'pie',
+                                    radius:['50%','60%'],
+                                    label:{
+                                        normal:{
+                                            show:false
+                                        }
+                                    },
+                                    labelLine:{
+                                        normal:{
+                                            show:false
+                                        }
+                                    },
+                                    emphasis:{
+                                        show:false
+                                    },
+                                    hoverAnimation:false,
+                                    data:[
+                                        {
+                                            value:parseFloat(this.currentRegion.vcpuAllocatedRate),
+                                            name:'',
+                                            itemStyle:{
+                                                normal:{
+                                                    color:'#3398DB'
+                                                }
+                                            },
+                                            hoverAnimation:false
+                                        },
+                                        {
+                                            value:(100-parseFloat(this.currentRegion.vcpuAllocatedRate)),
+                                            name:'',
+                                            itemStyle:{
+                                                normal:{
+                                                    color:'#d4d8db'
+                                                }
+                                            },
+                                            hoverAnimation:false
+                                        }
+                                    ]
+                                }
+                            ]
+                        })
+        },
+        drawStorageRound() {
+            const roundStorageContainer = echarts.init(
+                document.querySelector('.detail-overview .round-storage-container')
+            )
+            roundStorageContainer.setOption({
+                tooltip:{
+                    show:false
+                },
+                legend: {
+                    orient:'vertical',
+                    x:'left',
+                    data:['77%']
+                },
+                itemStyle: {
+                    color:'#3398DB'
+                },
+                series: [
+                    {
+                        name:'',
+                        type:'pie',
+                        radius:['50%','60%'],
+                        label:{
+                            normal:{
+                                position:'center',
+                                formatter:'{c}',
+                                textStyle:{
+                                    color:'#3398DB',
+                                    fontSize:27
+                                }
+                            }
+                        },
+                        data:[
+                            {
+                            value:this.currentRegion.memAllocatedRate,
+                            name:'',
+                            hoverAnimation:false
+                            }
+                            ]
+                    },
+                    {
+                        name:'',
+                        type:'pie',
+                        radius:['50%','60%'],
+                        label:{
+                            normal:{
+                                show:false
+                            }
+                        },
+                        labelLine:{
+                            normal:{
+                                show:false
+                            }
+                        },
+                        emphasis:{
+                            show:false
+                        },
+                        hoverAnimation:false,
+                        data:[
+                            {
+                                value:parseFloat(this.currentRegion.memAllocatedRate),
+                                name:'',
+                                itemStyle:{
+                                    normal:{
+                                        color:'#3398DB'
+                                    }
+                                },
+                                hoverAnimation:false
+                            },
+                            {
+                                value:(100-parseFloat(this.currentRegion.memAllocatedRate)),
+                                name:'',
+                                itemStyle:{
+                                    normal:{
+                                        color:'#d4d8db'
+                                    }
+                                },
+                                hoverAnimation:false
+                            }
+                        ]
+                    }
+                ]
+            })
+        },
+    }
+}
+</script>
+
+<style scoped>
+.detail-overview .round-vcpu-container,
+.detail-overview .round-storage-container,
+.detail-overview .bar-container {
+    height:350px;
+}
+.detail-overview .vcpu-title, .detail-overview .storage-title{
+    border-bottom:5px solid #c5e8e2;
+}
+.bar-container {
+    width:400px;
+    color:'red'
+}
+</style>
