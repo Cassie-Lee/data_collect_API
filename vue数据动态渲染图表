@@ -25,17 +25,8 @@
         <div class="tablePadding">
           <el-table
             :data="tenantData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
-            border
-            stripe
-            show-overflow-tooltip
-            style="width: 100%;"
-            v-loading="loading">
+            border stripe show-overflow-tooltip style="width: 100%;" v-loading="loading">
             <el-table-column label="用户名称" prop="customer_name"></el-table-column>
-            <el-table-column label="用户类别" prop="sort_name" sortable show-overflow-tooltip width="150"></el-table-column>
-            <el-table-column label="Domain_id" prop="domain_id" sortable show-overflow-tooltip width="300"></el-table-column>
-            <el-table-column label="用户等级" prop="customer_level_name" sortable show-overflow-tooltip width="120"></el-table-column>
-            <el-table-column label="租户id" prop="tenant_id" sortable show-overflow-tooltip width="500"></el-table-column>
-            <el-table-column label="区域名称" prop="t_region_name" sortable show-overflow-tooltip width="150"></el-table-column>
             <el-table-column label="VM详情" prop="VM_detail" sortable show-overflow-tooltip width="206">
                 <template slot-scope="scope">
                     <el-button type="text" @click="showDetails(scope.row)">查看詳情</el-button>
@@ -44,12 +35,8 @@
           </el-table>
           <div class="block">
             <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[10, 15, 20, 50,100]"
-              :page-size="pagesize"
-              layout="total, sizes, prev, pager, next, jumper"
+              @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+              :page-sizes="[10, 15, 20, 50,100]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper"
               :total="tenantData.length"></el-pagination>
           </div>
           <el-dialog class="detail" :visible.sync="dialogVisible" width="80%" center v-if="dialogVisible">
@@ -62,12 +49,10 @@
 </template>
 <script>
 import isolatedhostManagement from "../components/isolatedhostManagement";
-import tablePage from "../components/table";
 import tenantDetails from '../components/tenantDetails'
 export default {
   components: {
     isolatedhostManagement,
-    tablePage,
     tenantDetails
   },
   data() {
@@ -88,6 +73,7 @@ export default {
     };
   },
   methods: {
+    # 点击搜索
     searchTenant() {
       this.visible = false;
       this.loading = true;
@@ -110,6 +96,7 @@ export default {
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage;
     },
+    # 组件通信，形参是当前行，传入子组件的是当前行的customer_name参数，也可以直接传入整个当前行到子组件，子组件再随意调用其中的任何一个参数
     showDetails(tenant) {
       this.dialogVisible = true
       this.currentVm = {
@@ -118,6 +105,7 @@ export default {
     },
   },
   mounted() {
+    # 默认加载全部数据
     this.$http
       .get('/operationManage/tenantInfo/')
       .then(resp => {
@@ -127,6 +115,7 @@ export default {
       .catch(error => {
         console.log(error)
       })
+    # 默认加载的选择框内容
     this.$http
         .get("/operationManage/regionInfo/")
         .then(resp => {
@@ -148,154 +137,203 @@ export default {
 }
 </style>
 
-下钻动态渲染页面：
+下钻动态渲染页面，此为以上组件的子组件，接受从父组件传递过来的参数：
 <template>
-  <div class="content">
-    <isolatedhost-Management></isolatedhost-Management>
-    <div class="main">
-      <div class="baseDiv">
-        <el-form ref="form" :model="form" label-width="5rem">
-          <el-row>
-            <el-col class="col-tenant" :span="12">
-              <el-form-item label="用户名称">
-                <el-input v-model="form.customer_name" placeholder="请输入用户名称"></el-input>
-              </el-form-item>
-              <el-form-item label="租户ID">
-                <el-input v-model="form.tenant_id" placeholder="请输入租户ID"></el-input>
-              </el-form-item>
-              <el-form-item label="所在区域">
-                <el-select v-model="form.t_region_name" placeholder="请选择区域" multiple collapse-tags filterable>
-                  <el-option v-for="item in azMsg" :key="item" :label="item" :value="item"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-button class="tenant-button" @click="searchTenant">查询</el-button>
-            </el-col>
-          </el-row>
-        </el-form>
-        <div class="tablePadding">
-          <el-table
-            :data="tenantData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
-            border
-            stripe
-            show-overflow-tooltip
-            style="width: 100%;"
-            v-loading="loading">
-            <el-table-column label="用户名称" prop="customer_name"></el-table-column>
-            <el-table-column label="用户类别" prop="sort_name" sortable show-overflow-tooltip width="150"></el-table-column>
-            <el-table-column label="Domain_id" prop="domain_id" sortable show-overflow-tooltip width="300"></el-table-column>
-            <el-table-column label="用户等级" prop="customer_level_name" sortable show-overflow-tooltip width="120"></el-table-column>
-            <el-table-column label="租户id" prop="tenant_id" sortable show-overflow-tooltip width="500"></el-table-column>
-            <el-table-column label="区域名称" prop="t_region_name" sortable show-overflow-tooltip width="150"></el-table-column>
-            <el-table-column label="VM详情" prop="VM_detail" sortable show-overflow-tooltip width="206">
-                <template slot-scope="scope">
-                    <el-button type="text" @click="showDetails(scope.row)">查看詳情</el-button>
-                </template>
-            </el-table-column>
-          </el-table>
-          <div class="block">
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[10, 15, 20, 50,100]"
-              :page-size="pagesize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="tenantData.length"></el-pagination>
-          </div>
-          <el-dialog class="detail" :visible.sync="dialogVisible" width="80%" center v-if="dialogVisible">
-            <tenant-details :tenant="currentVm"></tenant-details>
-          </el-dialog>
+  <div class="tenant-detail">
+    <el-container>
+      <el-header class="detail-overview" style="height:auto">
+        <el-row>
+          <el-col :span="10">
+            <div class="tag-container">
+              <h4 class="title-detail">用户详情</h4>
+              <div class="tag-detail-container">
+                <p class="tag-detail">用户名称&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{tenant.customer_name}}</p>
+                <p class="tag-detail">用户类别&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{tenantDetail.sort_name}}
+                </p>
+                <p class="tag-detail">Domain_id&nbsp;&nbsp; {{tenantDetail.domain_id}}
+                </p>
+                <p class="tag-detail">用户等级&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{tenantDetail.customer_level_name}}
+                </p>
+                <p class="tag-detail">VM总数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{totalVm}}
+                </p>
+                <div class="tenantDiv">
+                  <div class="tag-detail">
+                    <p>租户id
+                    </p>
+                    <p v-for="item in tenantDetail.tenant_id" :key="item">{{item}}
+                    </p>
+                  </div>
+                  <div class="tag-detail">
+                    <p>区域
+                    </p>
+                    <p v-for="item in tenantDetail.t_region_name" :key="item">{{item}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="14" class="tree-container">
+          </el-col>
+        </el-row>
+      </el-header>
+      <el-main class="detail-content">
+        <el-table :data="vmData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border stripe show-overflow-tooltip style="width: 100%;" v-loading="loading">
+          <el-table-column label="名称" prop="name" align="left" width="205" sortable show-overflow-tooltip></el-table-column>
+          .......
+        </el-table>
+        <div class="block">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 15, 20, 50,100]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="vmData.length">
+          </el-pagination>
         </div>
-      </div>
-    </div>
+      </el-main>
+    </el-container>
   </div>
 </template>
 <script>
-import isolatedhostManagement from "../components/isolatedhostManagement";
-import tablePage from "../components/table";
-import tenantDetails from '../components/tenantDetails'
+import echarts from 'echarts'
 export default {
-  components: {
-    isolatedhostManagement,
-    tablePage,
-    tenantDetails
-  },
   data() {
     return {
       loading: false,
-      tenantData: [],
+      tenantDetail: {},
+      tenantTree: {},
       currentPage: 1,
-      dialogVisible:false,
-      pagesize: 20,
-      form: {
-        customer_name:'',
-        tenant_id:'',
-        t_region_name:[]
-      },
-      azMsg:[],
-      currentVm:{},
-      visible: false,
-    };
+      pagesize: 10,
+      totalVm:0,
+      vmData: []
+    }
   },
-  methods: {
-    searchTenant() {
-      this.visible = false;
-      this.loading = true;
-      this.$http
-        .post("/operationManage/tenantInfo/", {
-          form: this.form
-        })
-        .then(resp => {
-          this.tenantData = resp.data;
-          this.loading = false;
-          this.currentPage=1
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-    handleSizeChange(size) {
-      this.pagesize = size;
-    },
-    handleCurrentChange(currentPage) {
-      this.currentPage = currentPage;
-    },
-    showDetails(tenant) {
-      this.dialogVisible = true
-      this.currentVm = {
-        customer_name: tenant.customer_name,
-      }
-    },
+  props: {
+    tenant: {
+      type: Object,
+      required: true
+    }
   },
   mounted() {
     this.$http
-      .get('/operationManage/tenantInfo/')
-      .then(resp => {
-        this.tenantData = resp.data
-        this.loading = false
+      .post('/operationManage/tenantInfo/getTenantTreeInfo/', {
+        customer_name: this.tenant.customer_name
       })
-      .catch(error => {
-        console.log(error)
+      .then(resp => {
+        this.tenantTree = resp.data.tenantTree
+        this.tenantTree.children.forEach((item,index) => {
+          item.children.forEach((item,index) => {
+            this.totalVm += item.children[0].name
+            item.children[0].name = `VM数量：${item.children[0].name}`
+          })
+        })
+        this.drawTree()
+      })
+      .catch(err => {
+        console.log(err)
       })
     this.$http
-        .get("/operationManage/regionInfo/")
-        .then(resp => {
-          const data = resp.data;
-          this.azMsg = data.regionName;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      .post('/operationManage/tenantInfo/getCustomerDetail/', {
+        customer_name: this.tenant.customer_name
+      })
+      .then(resp => {
+        this.tenantDetail = resp.data.data[0]
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    this.$http
+      .post('/operationManage/tenantInfo/getVmInfo/', {
+        customer_name: this.tenant.customer_name
+      })
+      .then(resp => {0
+        this.vmData = resp.data.data
+        this.loading = false
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  },
+  methods: {
+    handleSizeChange(size) {
+      this.pagesize = size
+    },
+    handleCurrentChange(currentPage) {
+      this.currentPage = currentPage
+    },
+    drawTree() {
+      const treeContainer = echarts.init(
+        document.querySelector('.detail-overview .tree-container')
+      )
+      treeContainer.setOption({
+        tooltip: {
+          trigger: 'item',
+          triggerOn: 'mousemove'
+        },
+        series: [
+          {
+              type: 'tree',
+              data: [this.tenantTree],
+              top: '5%',
+              left: '2%',
+              bottom: '5%',
+              right: '8%',
+              symbol:'rect',
+              orient: 'vertical',
+              symbolSize: (rawValue, params) => {
+                params.symbolSize = [params.name.toString().length * 6 + 40, 25]
+                return params.symbolSize
+              },
+              label: {
+                  normal: {
+                      position: 'inside',
+                      rotate: 0,
+                      verticalAlign: 'middle',
+                      align: 'center',
+                      backgroundColor: '#F2F2F2'
+                  }
+              },
+              leaves: {
+                  label: {
+                      normal: {
+                          position: 'inside',
+                          rotate: 0,
+                          verticalAlign: 'middle',
+                          align: 'center'
+                      }
+                  }
+              },
+              lineStyle:{
+                curveness:0
+              },
+              itemStyle:{
+                color:'#F2F2F2',
+                borderWidth:0.4,
+                borderColor:'1px solid rgba(0, 0, 0, 0.1)'
+              },
+              expandAndCollapse: true,
+              initialTreeDepth:3,
+              animationDurationUpdate: 750
+          }
+        ]
+      })
+    },
+    getTenantTreeInfo() {
+      return this.$http.post('/operationManage/tenantInfo/getTenantTreeInfo/', {
+        customer_name: this.tenant.customer_name
+      })
+    },
+    getCustomerDetail() {
+      return this.$http.post('/operationManage/tenantInfo/getCustomerDetail/', {
+        customer_name: this.tenant.customer_name
+      })
+    },
+    getVmInfo() {
+      return this.$http.post('/operationManage/tenantInfo/getVmInfo/', {
+        customer_name: this.tenant.customer_name
+      })
+    }
   }
-};
+}
 </script>
 <style>
-.col-tenant .el-form-item {
-    float: left;
-}
-.col-tenant .tenant-button{
-  margin-left: 20px;
-}
+
 </style>
 
 动态图表渲染页面：
