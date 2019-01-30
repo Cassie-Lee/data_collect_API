@@ -96,7 +96,7 @@ export default {
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage;
     },
-    # 组件通信，形参是当前行，传入子组件的是当前行的customer_name参数，也可以直接传入整个当前行到子组件，子组件再随意调用其中的任何一个参数
+    # 组件通信，形参是当前行，此处传入子组件的是当前行的customer_name参数，也可以直接传入整个当前行到子组件，子组件再随意调用其中的任何一个参数
     showDetails(tenant) {
       this.dialogVisible = true
       this.currentVm = {
