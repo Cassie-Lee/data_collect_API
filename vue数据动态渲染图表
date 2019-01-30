@@ -148,31 +148,24 @@ export default {
               <h4 class="title-detail">用户详情</h4>
               <div class="tag-detail-container">
                 <p class="tag-detail">用户名称&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{tenant.customer_name}}</p>
-                <p class="tag-detail">用户类别&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{tenantDetail.sort_name}}
-                </p>
-                <p class="tag-detail">Domain_id&nbsp;&nbsp; {{tenantDetail.domain_id}}
-                </p>
-                <p class="tag-detail">用户等级&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{tenantDetail.customer_level_name}}
-                </p>
-                <p class="tag-detail">VM总数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{totalVm}}
-                </p>
+                <p class="tag-detail">用户类别&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{tenantDetail.sort_name}}</p>
+                <p class="tag-detail">Domain_id&nbsp;&nbsp; {{tenantDetail.domain_id}}</p>
+                <p class="tag-detail">用户等级&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{tenantDetail.customer_level_name}}</p>
+                <p class="tag-detail">VM总数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{totalVm}}</p>
                 <div class="tenantDiv">
                   <div class="tag-detail">
-                    <p>租户id
-                    </p>
-                    <p v-for="item in tenantDetail.tenant_id" :key="item">{{item}}
-                    </p>
+                    <p>租户id</p>
+                    <p v-for="item in tenantDetail.tenant_id" :key="item">{{item}}</p>
                   </div>
                   <div class="tag-detail">
-                    <p>区域
-                    </p>
-                    <p v-for="item in tenantDetail.t_region_name" :key="item">{{item}}
-                    </p>
+                    <p>区域</p>
+                    <p v-for="item in tenantDetail.t_region_name" :key="item">{{item}}</p>
                   </div>
                 </div>
               </div>
             </div>
           </el-col>
+          # 动态渲染的树状图，class的tree-container名称对应后面的treeContainer
           <el-col :span="14" class="tree-container">
           </el-col>
         </el-row>
@@ -204,6 +197,7 @@ export default {
       vmData: []
     }
   },
+  # 通过props从父组件接收tenant参数
   props: {
     tenant: {
       type: Object,
@@ -211,6 +205,7 @@ export default {
     }
   },
   mounted() {
+    # 获取树状图所需的数据
     this.$http
       .post('/operationManage/tenantInfo/getTenantTreeInfo/', {
         customer_name: this.tenant.customer_name
@@ -223,6 +218,7 @@ export default {
             item.children[0].name = `VM数量：${item.children[0].name}`
           })
         })
+        # 画树状图
         this.drawTree()
       })
       .catch(err => {
@@ -244,6 +240,7 @@ export default {
       })
       .then(resp => {0
         this.vmData = resp.data.data
+        # 数据加载出来后，取消加载中状态
         this.loading = false
       })
       .catch(err => {
@@ -257,7 +254,9 @@ export default {
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage
     },
+    # 画树形图
     drawTree() {
+      # 定义treeContainer，对应上面class的tree-container
       const treeContainer = echarts.init(
         document.querySelector('.detail-overview .tree-container')
       )
@@ -313,27 +312,11 @@ export default {
           }
         ]
       })
-    },
-    getTenantTreeInfo() {
-      return this.$http.post('/operationManage/tenantInfo/getTenantTreeInfo/', {
-        customer_name: this.tenant.customer_name
-      })
-    },
-    getCustomerDetail() {
-      return this.$http.post('/operationManage/tenantInfo/getCustomerDetail/', {
-        customer_name: this.tenant.customer_name
-      })
-    },
-    getVmInfo() {
-      return this.$http.post('/operationManage/tenantInfo/getVmInfo/', {
-        customer_name: this.tenant.customer_name
-      })
     }
   }
 }
 </script>
 <style>
-
 </style>
 
 动态图表渲染页面：
@@ -343,14 +326,17 @@ export default {
       <el-header class="detail-overview" style="height:auto">
          <el-row :gutter="20">
             <el-col :span="12">
+                # 数据条，直方图
                 <div class="bar-container"></div>
             </el-col>
             <el-col :span="6">
                 <h3 class="vcpu-title">Vcpu分配率</h3>
+                # 圆环
                 <div class="round-vcpu-container"></div>
             </el-col>
             <el-col :span="6">
                 <h3 class="storage-title">内存分配率</h3>
+                # 圆环
                 <div class="round-storage-container"></div>
             </el-col>
         </el-row>
@@ -358,18 +344,7 @@ export default {
       <el-main class="detail-content">
         <el-table :data="regionData.slice((currentPage-1)*pagesize,currentPage*pagesize)" show-overflow-tooltip border stripe style="width:100%">
           <el-table-column prop="clusterName" label="集群名" show-overflow-tooltip width="200"></el-table-column>
-          <el-table-column prop="podName" label="pod名" show-overflow-tooltip width="170"></el-table-column>
-          <el-table-column prop="totalHostNum" label="主机数" show-overflow-tooltip ></el-table-column>
-          <el-table-column prop="separateNum" label="隔离主机数" show-overflow-tooltip width="105"></el-table-column>
-          <el-table-column prop="allocatedVmNum" label="已发放vm数" show-overflow-tooltip width="105"></el-table-column>
-          <el-table-column prop="totalVcpuNum" label="总vcpu(个)" show-overflow-tooltip width="105"></el-table-column>
-          <el-table-column prop="allocatedVcpuNum" label="已分配vcpu(个)" show-overflow-tooltip width="130"></el-table-column>
-          <el-table-column prop="toatalMem" label="总内存(GB)" show-overflow-tooltip width="105"></el-table-column>
-          <el-table-column prop="allocatedMem" label="已分配内存" show-overflow-tooltip width="105"></el-table-column>
-          <el-table-column prop="freeVcpuNum" label="剩余可发放vcpu" show-overflow-tooltip width="135"></el-table-column>
-          <el-table-column prop="freeMem" label="剩余可发放内存" show-overflow-tooltip width="135"></el-table-column>
-          <el-table-column prop="vcpuAllocatedRate" label="vcpu分配率" show-overflow-tooltip width="105"></el-table-column>
-          <el-table-column prop="memAllocatedRate" label="内存分配率" show-overflow-tooltip width="105"></el-table-column>
+          .......
         </el-table>
       </el-main>
     </el-container>
@@ -390,6 +365,7 @@ export default {
             pagesize:5
         }
         },
+    #  通过props从父组件接收对象
     props:{
         currentRegion:{}
     },
@@ -408,6 +384,7 @@ export default {
         },
         loadingMsg() {
         this.$http
+        # 给后端传入regionName参数，返回数据
         .post('/capacityManage/regionCompute/regionDrilldown/',{
             currentRegion:this.currentRegion.regionName
         })
@@ -415,6 +392,7 @@ export default {
             this.regionData=resp.data
         })
         },
+        # 画直方图
         drawBar() {
             const barContainer = echarts.init(
                 document.querySelector('.detail-overview .bar-container'))
@@ -438,6 +416,7 @@ export default {
                             xAxis:[
                                 {
                                     type:'category',
+                                    # 提供x轴标签数据
                                     data:resp.data.dataKeyList,
                                     axisLine:{
                                         lineStyle:{
@@ -445,6 +424,7 @@ export default {
                                         }
                                     },
                                     axisLabel:{
+                                        # 设置x轴标签45度倾斜
                                         rotate:45,
                                         show:true,
                                         textStyle:{
@@ -474,6 +454,7 @@ export default {
                                             position:'top'
                                         }
                                     },
+                                    # 设置y轴数据，即条形图的值
                                     data:resp.data.dataList,
                                     axisLabel:['数据1','数据2','数据3','数据4','数据5']
                             }
@@ -481,6 +462,7 @@ export default {
                     })
             })
         },
+        # 画圆形图
         drawVcpuRound() {
             const roundVcpuContainer = echarts.init(
                 document.querySelector('.detail-overview .round-vcpu-container'))
@@ -500,6 +482,7 @@ export default {
                                 {
                                     name:'',
                                     type:'pie',
+                                    # 圆环的内环和外形半径
                                     radius:['50%','60%'],
                                     label:{
                                         normal:{
@@ -513,6 +496,7 @@ export default {
                                     },
                                     data:[
                                         {
+                                        # 圆环框内的内容
                                         value:this.currentRegion.vcpuAllocatedRate,
                                         name:'',
                                         hoverAnimation:false
@@ -522,6 +506,7 @@ export default {
                                 {
                                     name:'',
                                     type:'pie',
+                                    # 圆环的内环和外形半径
                                     radius:['50%','60%'],
                                     label:{
                                         normal:{
@@ -539,6 +524,7 @@ export default {
                                     hoverAnimation:false,
                                     data:[
                                         {
+                                            # 圆环的一部分占比
                                             value:parseFloat(this.currentRegion.vcpuAllocatedRate),
                                             name:'',
                                             itemStyle:{
@@ -549,6 +535,7 @@ export default {
                                             hoverAnimation:false
                                         },
                                         {
+                                            # 圆环的另一部分占比
                                             value:(100-parseFloat(this.currentRegion.vcpuAllocatedRate)),
                                             name:'',
                                             itemStyle:{
@@ -563,6 +550,7 @@ export default {
                             ]
                         })
         },
+        # 画圆环图
         drawStorageRound() {
             const roundStorageContainer = echarts.init(
                 document.querySelector('.detail-overview .round-storage-container')
@@ -583,6 +571,7 @@ export default {
                     {
                         name:'',
                         type:'pie',
+                        # 圆环的内环和外形半径
                         radius:['50%','60%'],
                         label:{
                             normal:{
@@ -596,6 +585,7 @@ export default {
                         },
                         data:[
                             {
+                            # 圆环框内的内容
                             value:this.currentRegion.memAllocatedRate,
                             name:'',
                             hoverAnimation:false
@@ -605,6 +595,7 @@ export default {
                     {
                         name:'',
                         type:'pie',
+                        # 圆环的内环和外形半径
                         radius:['50%','60%'],
                         label:{
                             normal:{
@@ -622,6 +613,7 @@ export default {
                         hoverAnimation:false,
                         data:[
                             {
+                                # 圆环的一部分占比
                                 value:parseFloat(this.currentRegion.memAllocatedRate),
                                 name:'',
                                 itemStyle:{
@@ -632,6 +624,7 @@ export default {
                                 hoverAnimation:false
                             },
                             {
+                                # 圆环的另一部分占比
                                 value:(100-parseFloat(this.currentRegion.memAllocatedRate)),
                                 name:'',
                                 itemStyle:{
