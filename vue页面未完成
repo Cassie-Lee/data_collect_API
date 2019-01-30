@@ -1,3 +1,4 @@
+# 一般用作未完成页面的引导，点击首页返回首页，点击返回返回上一个页面
 <template>
   <div class="logo-content">
     <div class="nothing">
