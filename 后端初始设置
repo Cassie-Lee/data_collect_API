@@ -1,0 +1,67 @@
+环境：python3.6
+创建app：
+创建app之后，在主app的settings.py中把新增的app添加到INSTALLED_APPS中
+在主app的urls.py文件中，加入所创建的appurl，一般设置如下：
+from django.contrib import admin
+# 这个函数在不同的python版本中略有不同
+from django.urls import path, include
+from django.views.generic.base import TemplateView
+
+# 数据库配置（settings.py）
+DATABASES = {
+     'default': {
+         'ENGINE': 'django.db.backends.mysql',
+         'NAME': 'dedicatedbasedata',
+         'USER': 'appro_DeC',
+         'PASSWORD': 'Kc<:c~48K/^.AWLq',
+         'HOST': 'DeC-3306-mydb-ser.service.consul',
+         'PORT': '3306',
+    },
+}
+
+# memchache缓存配置（settings.py）
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+        'TIMEOUT': 60*10,
+        'OPTIONS': {
+            # 'MAX_ENTRIES': 300,
+            # 'CULL_FREQUENCY': 3,
+            'server_max_value_length': 1024 * 1024 * 20,
+        }
+    }
+}
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    # 创建模板试图，整合前后端
+    path('', TemplateView.as_view(template_name="index.html")),
+    # 新增的app在这里添加
+    path('operationPortal/', include('operationPortal.urls')),
+    path('exclusiveCloud/',include('exclusiveCloud.urls')),
+  
+单个app初始设置：
+
+apps.py
+from django.apps import AppConfig
+class OperationportalConfig(AppConfig):
+    name = 'operationPortal'
+
+urls.py
+
+from django.urls import path
+from operationPortal import views
+from operationPortal import viewsDrilldown
+
+urlpatterns = [
+    path('operationCluster/', views.loadClusterInfo, name='loadClusterData'),
+    path('operationCluster/download/', views.downloadClusterInfo, name='downloadClusterInfo'),
+    path('operationCluster/hypervisor/', viewsDrilldown.getHypervisorByCluster, name='getHypervisorInfo'),
+    path('operationCluster/vm/', viewsDrilldown.getVmByCluster, name='getVmInfoInCluster'),
+
+    path('operationHypervisor/', views.loadHostData, name='loadHostData'),
+    path('operationHypervisor/download/', views.downloadHostData, name='downloadHostData'),
+]
+
+
