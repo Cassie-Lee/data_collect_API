@@ -95,3 +95,40 @@ detailInfo = {
 ]
 }
 json数据格式
+
+hosts文件配置：
+路径：c:\windows\system32\drivers\etc\hosts
+数据库连接配置：ip 域名
+如：10.1.70.155  cloudu-3306-mydb-ser.service.consul
+test.huawei.com域名配置：本机ip 域名
+如：10.0.206.174  test.huawei.com
+
+生产库只读账号：
+账号：appro_cloudu   密码：SNwPnQqevg6kjA==
+
+pip安装django第三方包（防火墙情况下）：
+通用区地址：
+pip install redis --trusted-host 10.1.251.166 -i http://10.1.251.166:8001/simple/
+pip install pymysql --trusted-host 10.235.23.90 -i http://10.235.23.90:8001/whl/
+pip install pymysql --trusted-host 10.1.251.166 -i http://10.1.251.166:8001/simple/
+
+hosts文件写入：
+hosts文件写入 10.1.208.178 cloudu-showdoc.huawei.com
+echo 10.1.208.178 cloudu-showdoc.huawei.com >> %windir%\System32\drivers\etc\hosts
+
+检查模块和包是否安装成功：
+进入python解释器，执行import MySQLdb类似操作，无报错即表示安装成功
+
+查看pip下已安装的包或模块：
+执行命令 pip list
+
+dig xxx.service.consul 
+查看数据库配置
+
+net localgroup Administrators winroot\sc00235713 /del
+删除winroot管理员账号
+
+Cmd命令行运行   ipconfig /all
+查看windowsip配置
+开发环境 cmd 下 运行 ： telnet 10.116.153.170 80   查看是否跟测试环境想通，是否能从开发环境访问测试环境
+
