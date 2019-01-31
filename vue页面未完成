@@ -139,3 +139,11 @@ export default {
 
 
 获取当前行url
+放在methods中的方法：
+getLocationUrl() {
+      const url=window.location.href
+      this.test=url
+    }
+ data的return里定义一个变量，用于存储获取到的url：
+ test:''
+ 存储到的url可通过此变量名使用和展示出来
