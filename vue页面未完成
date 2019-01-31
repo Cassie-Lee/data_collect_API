@@ -33,6 +33,109 @@ export default {
 </style>
 
 首页
-s
+<template>
+<div class="content">
+  <div class="navigation">
+    <div class="is-not-permitted" v-if="!isPermitted">当前用户无权限使用该功能，若需使用，请联系管理员申请权限</div>
+    <div v-else>
+      <div class="navigation-header">
+        <el-button>{{test}}</el-button>
+        <el-button round v-for="(region,index) in regionList" :key="index" @click="changeRegion(region)">{{region}}</el-button>
+      </div>
+      <div class="navigation-content">
+        <el-collapse v-model="activePanels">
+          <el-collapse-item v-for="(position,index) in positions" :key="index" :title="position" :name="position" v-if="showCollapse(position)">
+            <div v-for="(data,index) in portalDetails" :key="index" v-if="data.region == currentRegion && data.position==position" class="portal-wrapper">
+              <a :href="data.portal" class="navigation-portal" target="_blank">
+                <span class="service">{{data.service}}</span>
+                <span class="portal">{{getIp(data.portal)}}</span>
+              </a>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
+    </div>
+  </div>
+</div>
+</template>
+
+<script>
+import * as Export from '../assets/javascripts/export.js'
+export default {
+  data() {
+    return {
+      test:'',
+      activePanels: [
+        'Console',
+        '管理服务区AZ1',
+        '管理服务区AZ2',
+        '管理服务区AZ3',
+        '级联层',
+        '被级联层AZ1',
+        '被级联层AZ2',
+        '被级联层AZ3',
+        '运维工具'
+      ],
+      isPermitted: true,
+      queryCondition: '',
+      regionList: ['东莞', '贵州', '乌兰察布一', '乌兰察布二', '乌兰察布三','北京五'],
+      currentRegion: '东莞',
+      portalDetails: [],
+      positions: [
+        'Console',
+        '管理服务区AZ1',
+        '管理服务区AZ2',
+        '管理服务区AZ3',
+        '级联层',
+        '被级联层AZ1',
+        '被级联层AZ2',
+        '被级联层AZ3',
+        '运维工具'
+      ]
+    }
+  },
+  created() {
+    this.getLocationUrl()
+    this.$http
+      .get('/exclusiveCloud/portalInfo/')
+      .then(resp => {
+        if ('isPermitted' in resp.data && !resp.data.isPermitted) {
+          this.isPermitted = false
+        } else {
+          this.isPermitted = true
+        }
+        this.portalDetails = resp.data
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  },
+  methods: {
+    getLocationUrl() {
+      const url=window.location.href
+      this.test=url
+    },
+    showCollapse(position) {
+      if (position == '被级联层AZ3') {
+        return this.currentRegion == '乌兰察布二' ? true : false
+      }
+
+      if (position == '管理服务区AZ3') {
+        return (this.currentRegion == '东莞' || this.currentRegion == '乌兰察布二')? true : false
+      }
+      return true
+    },
+    changeRegion(region) {
+      this.currentRegion = region
+    },
+    getIp(url) {
+      return Export.sliceIp(url)
+    }
+  }
+}
+</script>
+<style scoped>
+</style>
+
 
 获取当前行url
