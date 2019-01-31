@@ -64,4 +64,7 @@ urlpatterns = [
     path('operationHypervisor/download/', views.downloadHostData, name='downloadHostData'),
 ]
 
+views.py
+对应urls.py的各种函数，如views.loadClusterInfo对应views.py里的loadClusterInfo()函数
 
+前端调用url时，一般写作'/基础url/url/',，基础url在主app中，如：'operationPortal/operationCluster'
