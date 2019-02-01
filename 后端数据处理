@@ -1,4 +1,31 @@
 memchache缓存模式
-
+主函数：
+def getIsolatedHosts(request):
+    searchPara = {}
+    # 缓存的key
+    resType = 'isolatedHosts'
+    # 获取前端请求数据
+    params = request.body.decode()
+    # 当请求存在，取请求的值，这里的form是请求的key
+    if params != '':
+        searchPara = eval(params)['form']
+    # 请求的form值为空时，默认加载全部数据
+    if (len(searchPara) == 0):
+        data = getAllIsolatedHosts(resType)
+    # 请求不为空时，即表示搜索，加载搜索数据
+    else:
+        searchList = []
+        # 遍历搜索对象（字典）
+        for key, value in searchPara.items():
+            # 处理前端传入的字符串，将带有逗号的字符串处理成列表
+            if isinstance(value, str) and ',' in value and value:
+                searchList.append({key: list(value.split(','))})
+             # 如果不是逗号隔开的字符串，即为单字符串或者列表，直接加入到对应key的值中
+            elif value:
+                searchList.append({key: value})
+        # 处理好请求的值的格式后，进行搜索，返回相应的数据
+        data = getPartIsolatedHosts(resType, searchList)
+    # 返回数据
+    return JsonResponse(data, safe=False)
 
 写入文件模式
