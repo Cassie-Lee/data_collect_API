@@ -27,5 +27,6 @@ def getIsolatedHosts(request):
         data = getPartIsolatedHosts(resType, searchList)
     # 返回数据
     return JsonResponse(data, safe=False)
+    
 
 写入文件模式
