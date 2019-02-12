@@ -20,6 +20,14 @@ DATABASES = {
 }
 
 # memchache缓存配置（settings.py）
+
+需要先安装缓存模块
+如果事先配置好pip源，直接pip安装即可，如果没有配置pip源，也可以直接下载安装
+安装后需要启动，cmd定位到memcahced.exe所在文件夹，执行：memcached.exe -d -I 20m，即可启动memcahce缓存
+或者无需定位，直接执行 ...\memcached-amd64>memcached.exe -d -I 20m ，前面是memcached.exe的路径
+这里，-d表示以守护进程启动，如果不加-d，关闭cmd窗口，memchache缓存的启动也会被关闭；加了-d，启动的cmd窗口关闭与否都不会影响memcahce缓存的运行
+20m表示单条缓存尺寸，一般默认为1m，当存储的数据很大时，可以根据需要调大这个尺寸，最大是128m。但尺寸太大，性能也会降低。
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
@@ -32,6 +40,9 @@ CACHES = {
         }
     }
 }
+
+60*10表示缓存超时时间，这里是10分钟，即十分钟缓存失效，这里要看数据的变动是否频繁
+1024 * 1024 * 20对应上面的单条缓存尺寸，可以根据需要调整
 
 urlpatterns = [
     path('admin/', admin.site.urls),
