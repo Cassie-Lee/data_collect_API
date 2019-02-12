@@ -1,13 +1,17 @@
 memchache缓存模式
-主函数：
+
+主函数，对应url的views.getIsolatedHosts：
+# request为前端传入后端的参数，一般放在post方法中传递
+
 def getIsolatedHosts(request):
     searchPara = {}
     # 缓存的key
     resType = 'isolatedHosts'
-    # 获取前端请求数据
+    # 获取前端传入的请求数据参数
     params = request.body.decode()
     # 当请求存在，取请求的值，这里的form是请求的key
     if params != '':
+        # 获取键为‘form’的参数，这里是一个对象，即一个字典
         searchPara = eval(params)['form']
     # 请求的form值为空时，默认加载全部数据
     if (len(searchPara) == 0):
