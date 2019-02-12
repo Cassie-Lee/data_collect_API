@@ -29,4 +29,5 @@ def getIsolatedHosts(request):
     return JsonResponse(data, safe=False)
     
 
+
 写入文件模式
