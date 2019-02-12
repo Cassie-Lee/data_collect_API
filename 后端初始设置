@@ -1,4 +1,4 @@
-环境：python3.6
+环境：python3.6.6
 创建app：
 创建app之后，在主app的settings.py中把新增的app添加到INSTALLED_APPS中
 在主app的urls.py文件中，加入所创建的appurl，一般设置如下：
