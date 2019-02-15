@@ -1,0 +1,18 @@
+返回数据格式为
+{
+"dataKeyList": ["vmNum", "Si2", "Si3", "c3_2", "c3_4", "d2", "h3", "m3", "g3", "g5", "ei_mcs_c3"],
+"dataList": [32899, 1198, 21854, 1640, 3047, 609, 329, 3983, 36, 69, 134]
+}
+
+@csrf_exempt
+def getRegionFlavorData(request):
+    #param = '西南-贵阳'
+    param = eval(request.body)['currentRegion']
+
+    if (len(param) == 0):
+        logging.error("[ERR]Get parameters error.")
+        data = None
+    else:
+        data = getFlavorDataByRegion(param)
+
+    return JsonResponse(data, safe=False)
