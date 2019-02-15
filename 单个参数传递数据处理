@@ -1,0 +1,76 @@
+前端：
+loadingMsg() {
+        this.$http
+        .post('/capacityManage/regionCompute/regionDrilldown/',{
+            currentRegion:this.currentRegion.regionName
+        })
+        .then(resp=>{
+            this.regionData=resp.data
+        })
+        }
+        
+此默认加载函数，可以放在mounted（）方法中触发，这里传入的是非对象，而是一个单独的参数
+
+
+@csrf_exempt
+def drilldownClusterData(request):
+    #param = '华北-乌兰察布二'
+    param = eval(request.body)['currentRegion']
+
+    if (len(param) == 0):
+        logging.error("[ERR]Get parameters error.")
+        data = None
+    else:
+        data = getClusterCapacity(param)
+
+    return JsonResponse(data, safe=False)
+    
+    
+def getClusterCapacity(regionName):
+    cursor = connections['default'].cursor()
+    try:
+        querySql = "select t_cluster_capacity.cluster_name as clusterName,t_pod.name as podName," \
+                   "t_cluster_capacity.total_host_num as totalHostNum," \
+                   "t_cluster_capacity.separate_num as separateNum,t_cluster_capacity.total_vcpu_num as totalVcpuNum," \
+                   "t_cluster_capacity.allocated_vcpu_num as allocatedVcpuNum,t_cluster_capacity.total_mem as toatalMem," \
+                   "t_cluster_capacity.allocated_mem as allocatedMem,t_cluster_capacity.free_vcpu_num as freeVcpuNum," \
+                   "t_cluster_capacity.free_mem as freeMem,t_cluster_capacity.allocated_vm_num as allocatedVmNum," \
+                   "ifnull(t_cluster_capacity.allocated_vcpu_num/t_cluster_capacity.total_vcpu_num,0) as vcpuAllocatedRate," \
+                   "ifnull(t_cluster_capacity.allocated_mem/t_cluster_capacity.total_mem, 0) as memAllocatedRate " \
+                   "from t_cluster_capacity left join t_cluster on t_cluster_capacity.t_cluster_id=t_cluster.id " \
+                   "left join t_pod on t_cluster.t_pod_id=t_pod.id " \
+                   "left join t_az on t_pod.t_az_id = t_az.id " \
+                   "left join t_region on t_az.t_region_id=t_region.id " \
+                   "where (t_cluster.attribute ='common' or t_cluster.attribute ='dec' or t_cluster.attribute='deh') and t_region.name = '"+regionName+"';"
+        cursor.execute(querySql)
+    except Exception as e:
+        logging.error("[ERR]Error info:%s", e)
+        return None
+
+    capacityRets = cursor.fetchall()
+    if len(capacityRets) == 0:
+        logging.error("[ERR]query capacity error.")
+        return None
+    fields = cursor.description
+    cursor.close()
+    colIndex = 0
+    column_list = []
+    for field in fields:
+        column_list.append(field[0])
+        colIndex += 1
+
+    dataList = []
+    for row in capacityRets:
+        ret = {}
+        # 保留百分比小数点后两位
+        vcpuAllocatedRate = format(row[colIndex - 2], '.2%')
+        memAllocatedRate = format(row[colIndex - 1], '.2%')
+        for i in range(0,colIndex - 2):
+            ret[column_list[i]] = str(row[i])
+            ret[column_list[i + 1]] = str(vcpuAllocatedRate)
+            ret[column_list[i + 2]] = str(memAllocatedRate)
+
+        dataList.append(ret)
+
+    cursor.close()
+    return dataList
