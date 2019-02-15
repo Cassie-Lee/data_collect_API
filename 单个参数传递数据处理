@@ -1,3 +1,10 @@
+此数据用于填充表格，数据类型类似于：
+[
+{"clusterName": "cnnorth5a-POD01-Si2-3-Common001", "podName": "cn-north-5a-pod01", "totalHostNum": "78", "separateNum": "4", "totalVcpuNum": "9360", "allocatedVcpuNum": "8074", "toatalMem": "34912.08", "allocatedMem": "23046.93", "freeVcpuNum": "1286", "freeMem": "11865.15", "allocatedVmNum": "1198", "vcpuAllocatedRate": "86.26%", "memAllocatedRate": "66.01%"}, 
+{"clusterName": "cnnorth5b-POD01-P1-8-DEC001", "podName": "cn-north-5b-pod01", "totalHostNum": "14", "separateNum": "0", "totalVcpuNum": "672", "allocatedVcpuNum": "152", "toatalMem": "7164.35", "allocatedMem": "1872.06", "freeVcpuNum": "520", "freeMem": "5292.29", "allocatedVmNum": "36", "vcpuAllocatedRate": "22.62%", "memAllocatedRate": "26.13%"}, 
+{"clusterName": "cnnorth5b-POD01-C3-4-Common001", "podName": "cn-north-5b-pod01", "totalHostNum": "26", "separateNum": "3", "totalVcpuNum": "1669", "allocatedVcpuNum": "1484", "toatalMem": "9947.51", "allocatedMem": "7130.12", "freeVcpuNum": "185", "freeMem": "2817.39", "allocatedVmNum": "197", "vcpuAllocatedRate": "88.92%", "memAllocatedRate": "71.68%"}
+]
+
 前端：
 loadingMsg() {
         this.$http
