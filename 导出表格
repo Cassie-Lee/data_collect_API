@@ -1,0 +1,27 @@
+def downloadAzCapacity(request):
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    # 表格名filename可以自定义
+    response['Content-Disposition'] = 'attachment;filename=azCapacity.xls'
+    
+    searchList = []
+
+    regionName = request.GET['regionName']
+    if regionName != '':
+        datas = region.split(",",)
+        searchList.append({'regionName':datas})
+        
+    az = request.GET['azName']
+    if az != '':
+        datas = az.split(",",)
+        searchList.append({'azName':datas})
+
+    resType = 'azCapacity'
+    datas = getAllCapacity(resType)
+    if (len(searchList)==0):
+        sio = writeCapacityToExcel(datas,resType)
+    else:
+        data = getDataInfoBySearch(searchList,datas)
+        sio = writeCapacityToExcel(data,resType)
+
+    response.write(sio.getvalue())
+    return response
