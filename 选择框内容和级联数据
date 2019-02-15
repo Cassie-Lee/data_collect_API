@@ -1,0 +1,13 @@
+def getOperationSearchInfo(request):
+    region = getRegionInfo()
+    avalibleZone = getAvalibleZoneInfo()
+    pod = getPodInfo()
+    cluster = getClusterInfo()
+    flavor = getFlavorInfo()
+    attribute = getClusterAttribute()
+
+    # 将查询到的数据存储在字典中
+    data = {'regionName':region,'avalibleZone':avalibleZone,'pod':pod,'cluster':cluster,
+            'flavor':flavor,'attribute':attribute}
+            
+    return JsonResponse(data, safe=False)
