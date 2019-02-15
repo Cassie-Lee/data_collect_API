@@ -1,3 +1,15 @@
+# 前端，传入导出需要的参数，函数在点击导出按钮处触发
+exportExcel() {
+      //导出Excel
+      const querys={
+        regionName:this.form.regionName,
+        azName:this.form.azName,
+      }
+      const url ='/operationPortal/operationHypervisor/download/'          //后端url
+      Export.downloadExcel(querys,url)
+    }
+    
+    
 def downloadAzCapacity(request):
     response = HttpResponse(content_type='application/vnd.ms-excel')
     # 表格名filename可以自定义
@@ -15,13 +27,51 @@ def downloadAzCapacity(request):
         datas = az.split(",",)
         searchList.append({'azName':datas})
 
+    # 获取全部的数据
     resType = 'azCapacity'
     datas = getAllCapacity(resType)
+    # 如果搜索列表为空，导出全部表格
     if (len(searchList)==0):
         sio = writeCapacityToExcel(datas,resType)
+    # 如果搜索列表不为空，出入搜索参数，搜索到相应的数据，再导出
     else:
         data = getDataInfoBySearch(searchList,datas)
         sio = writeCapacityToExcel(data,resType)
 
+    # 返回结果
     response.write(sio.getvalue())
     return response
+    
+   
+def writeCapacityToExcel(datas,resType):
+    excelContent = definitionExcelContent(resType)
+    headerTitle = excelContent['headerTitle']
+    header = excelContent['header']
+    sheetName = excelContent['sheetName']
+    output = writeToExcel(datas,headerTitle,header,sheetName)
+    return output
+    
+    
+def writeToExcel(datas,headerTitle,header,sheetName):
+    wb = xlwt.Workbook(encoding='utf-8')
+    sheet = wb.add_sheet(sheetName)
+    column = len(headerTitle)
+    if datas == None:
+        return
+    # 在第一行写表头
+    for i in range(0,column):
+        sheet.write(0,i,headerTitle[i])
+    # 从第二行开始，写入数据
+    rowIdx = 1
+    for data in datas:
+        for colIdx in range(0,column):
+            sheet.write(rowIdx,colIdx,data[header[colIdx]])
+        # 行数递增
+        rowIdx += 1
+        # 最多写入50000条数据，设置表格数据上限
+        if rowIdx >= 50000:
+            break
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return output
