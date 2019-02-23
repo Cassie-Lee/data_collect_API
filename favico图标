@@ -17,3 +17,6 @@ index.html文件中：
 
 compare刷新：
 ctrl+f5
+
+element级联多选包：
+ele-multi-cascader
