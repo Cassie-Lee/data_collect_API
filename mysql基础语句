@@ -116,3 +116,21 @@ mysql的ifnull函数，如果第一个值不为空，则返回该值，如果第
                 "left join t_region on t_az.t_region_id = t_region.id " \
                 "where t_cluster.attribute = 'common' or t_cluster.attribute = 'dec' or t_cluster.attribute = 'deh' " \
                 "group by t_cluster.attribute,t_flavor.name,t_az.name;"
+                
+  
+  connect = "' or region='"
+  regionStr = connect.join(region)
+  querySql="selectlb from table_name where region='"+regionStr+"';"
+  querySql="select lb " +\
+           "from table_name " \
+           "where region='"+region+"';"
+  # 这里，regionStr是一个字符串，内容为where筛选内容，前后的引号是因为此字符串前后分别缺乏一个引号
+  
+  
+  
+  
+  
+  
+  
+  
+  
