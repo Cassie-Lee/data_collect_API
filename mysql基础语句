@@ -124,7 +124,9 @@ mysql的ifnull函数，如果第一个值不为空，则返回该值，如果第
   querySql="select lb " +\
            "from table_name " \
            "where region='"+region+"';"
-  # 这里，regionStr是一个字符串，内容为where筛选内容，前后的引号是因为此字符串前后分别缺乏一个引号
+  # 这里，regionStr是一个字符串，内容为where筛选内容，前后的引号是因为此字符串前后分别缺乏一个引号 
+  
+  truncate table tablename    清空表格tablename
   
   
   
